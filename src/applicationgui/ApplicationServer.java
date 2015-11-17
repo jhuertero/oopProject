@@ -39,11 +39,12 @@ public class ApplicationServer {
                     Login(s, uh);
                     oos.close();
                     os.close();
-                }else if(message.equals("addUser")){
+                }else if(message.equals("deleteUser")){
                     message = "OK";
                     OutputStream os = s.getOutputStream();
                     ObjectOutputStream oos = new ObjectOutputStream(os);
                     oos.writeObject(message);
+                    removeUser(s, uh);
                     System.out.println(message);
                     oos.close();
                     os.close();
@@ -95,6 +96,31 @@ public class ApplicationServer {
                     oos.writeObject(message);
                     os.close();
                 }
+            }
+        }catch(Exception e){
+            System.err.println("Error: " + e.getMessage());
+            e.printStackTrace(System.err);
+        }
+    }
+    
+    private static void removeUser(Socket s, UserHandler uh){
+        try{
+            InputStream is = s.getInputStream();
+            ObjectInputStream ois = new ObjectInputStream(is);
+            User u = (User)ois.readObject();
+            System.out.println(u.getID());
+            if(uh.deleteUser(u.getID()) == true){
+                String message = "1";
+                OutputStream os = s.getOutputStream();
+                ObjectOutputStream oos = new ObjectOutputStream(os);
+                oos.writeObject(message);
+                os.close();
+            }else{
+                String message = "-1";
+                OutputStream os = s.getOutputStream();
+                ObjectOutputStream oos = new ObjectOutputStream(os);
+                oos.writeObject(message);
+                os.close();
             }
         }catch(Exception e){
             System.err.println("Error: " + e.getMessage());
