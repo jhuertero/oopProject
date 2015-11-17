@@ -1,0 +1,15 @@
+TRaCES prototype
+To launch run ApplicationGUI.jar
+
+This will bring up the Login screen.
+Two users have been created for this protoype: A normal user and a Super user
+for super user enter 20576 as username and 123456 as password
+for user enter 20577 as username and 123456 as password
+
+loggin in as user will bring up user mode but the functunality has not been implemented yet.
+
+In super user mode one will arrive in the admin console.
+From here one can either go to Transaction mode (user mode), Manage users, or Manage Devices
+
+For Manage Users both add user and remove user have been implemented.
+For Manage equipment only adding camera and headphone have been implemented.
