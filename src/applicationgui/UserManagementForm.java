@@ -4,6 +4,11 @@
  * and open the template in the editor.
  */
 package applicationgui;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
+import java.net.Socket;
 import javax.swing.JOptionPane;
 /**
  *
@@ -294,13 +299,58 @@ public class UserManagementForm extends javax.swing.JFrame {
     }//GEN-LAST:event_addUserBtnActionPerformed
 
     private void removeBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeBtnActionPerformed
+        try{
+            Socket s = new Socket("localHost", 8765);
+            String message = "deleteUser";
+            OutputStream os = s.getOutputStream();
+            ObjectOutputStream oos = new ObjectOutputStream(os);
+            oos.writeObject(message);
+            
+            InputStream is = s.getInputStream();
+            ObjectInputStream ois = new ObjectInputStream(is);
+            message = (String)ois.readObject();
+            if(message.equals("OK")){
+                System.out.println(message);
+                removeUser(s);
+            }else{
+                JOptionPane.showMessageDialog(messagePane, "Error");
+            }
+            ois.close();
+            is.close();
+            os.close();
+            s.close();            
+        }catch(Exception e){
+            System.err.println("Error: " + e.getMessage());
+            e.printStackTrace(System.err);
+        }/*
         if(u.deleteUser(idBox.getText()) == true){
             JOptionPane.showMessageDialog(messagePane, "User Removed Succesfully");
         }else{
             JOptionPane.showMessageDialog(messagePane, "User does not Exists");
-        }
+        }*/
     }//GEN-LAST:event_removeBtnActionPerformed
 
+    private void removeUser(Socket s){
+        try{
+            User u = new User();
+            u.setID(idBox.getText());
+            OutputStream os = s.getOutputStream();
+            ObjectOutputStream oos = new ObjectOutputStream(os);
+            oos.writeObject(u);
+            
+            InputStream is = s.getInputStream();
+            ObjectInputStream ois = new ObjectInputStream(is);
+            String message = (String)ois.readObject();
+            System.out.println(message);
+            if(message.equals("1")){
+                JOptionPane.showMessageDialog(messagePane, "User Removed Succesfully");
+            }else{
+                JOptionPane.showMessageDialog(messagePane, "User does not Exists");
+            }
+        }catch(Exception e){
+            
+        }     
+    }
     /**
      * @param args the command line arguments
      */
