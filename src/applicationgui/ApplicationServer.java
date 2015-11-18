@@ -22,7 +22,11 @@ public class ApplicationServer {
         UserHandler uh = new UserHandler();
         CameraHandler ch = new CameraHandler();
         HeadPhoneHandler hh = new HeadPhoneHandler();
+        PersonHandler ph = new PersonHandler();
+        
+        ph.DeserializeUserList();
         uh.DeserializeUserList();
+        ch.DeserializeCameraList();
         RequestHandler rh;
         while(true){
             try{
@@ -38,7 +42,7 @@ public class ApplicationServer {
                     OutputStream os = s.getOutputStream();
                     ObjectOutputStream oos = new ObjectOutputStream(os);
                     oos.writeObject(message);
-                    Login(s, uh);
+                    Login(s, ph);
                     oos.close();
                     os.close();
                 }else if(message.equals("deleteUser")){
@@ -55,7 +59,7 @@ public class ApplicationServer {
                     OutputStream os = s.getOutputStream();
                     ObjectOutputStream oos = new ObjectOutputStream(os);
                     oos.writeObject(message);
-                    addUser(s, uh);
+                    addUser(s, ph);
                     System.out.println(message);
                     oos.close();
                     os.close();
@@ -90,16 +94,16 @@ public class ApplicationServer {
         }
     }
     
-    private static void Login(Socket s, UserHandler uh){
+    private static void Login(Socket s, PersonHandler ph){
         try{
             InputStream is = s.getInputStream();
             ObjectInputStream ois = new ObjectInputStream(is);
-            User u = (User)ois.readObject();            
-            if(u != null){
+            User p = (User)ois.readObject();            
+            if(p != null){
                 try{
                     User u1;
-                    u1 = uh.getUser(u.getID());
-                    if(u1.getPassword().equals(u.getPassword()) == true){
+                    u1 = (User)(ph.getPerson(p.getID()));
+                    if(u1.getPassword().equals(p.getPassword()) == true){
                         String message;
                                     
                         if(u1.getUserType() == User.UserType.SUPERUSER)
@@ -157,18 +161,19 @@ public class ApplicationServer {
         }
     }
     
-    private static void addUser(Socket s, UserHandler uh){
+    private static void addUser(Socket s, PersonHandler ph){
         try{
             InputStream is = s.getInputStream();
             ObjectInputStream ois = new ObjectInputStream(is);
-            User u = (User)ois.readObject();
+            Person p = (Person)ois.readObject();
             
-            if(uh.addUser(u) == true){
+            if(ph.addPerson(p) == true){
                 String message = "1";
                 OutputStream os = s.getOutputStream();
                 ObjectOutputStream oos = new ObjectOutputStream(os);
                 oos.writeObject(message);
                 os.close();
+                ph.SerializeUser();
             }else{
                 String message = "-1";
                 OutputStream os = s.getOutputStream();
@@ -200,6 +205,7 @@ public class ApplicationServer {
                 ObjectOutputStream oos = new ObjectOutputStream(os);
                 oos.writeObject(message);
                 os.close();
+                
             }
         }catch(Exception e){
             System.err.println("Error: " + e.getMessage());
