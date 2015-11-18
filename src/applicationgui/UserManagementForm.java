@@ -275,7 +275,7 @@ public class UserManagementForm extends javax.swing.JFrame {
     }//GEN-LAST:event_formWindowClosed
 
     private void addUserBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addUserBtnActionPerformed
-        if(userBtn.isSelected()){
+        /*if(userBtn.isSelected()){
             if(u.addUser(idBox.getText(), fNameBox.getText(), lNameBox.getText(), emailBox.getText(), passBox.getText(), User.UserType.USER) != false){;
                 User p;
                 p = u.getUser(idBox.getText());
@@ -295,9 +295,61 @@ public class UserManagementForm extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(messagePane, "User with same ID already Exists");
                 System.out.println("User already exists");
             }
-        }        
+        }*/        
+        
+        try{
+            Socket s = new Socket("localHost", 8765);
+            String message = "addUser";
+            OutputStream os = s.getOutputStream();
+            ObjectOutputStream oos = new ObjectOutputStream(os);
+            oos.writeObject(message);
+            
+            InputStream is = s.getInputStream();
+            ObjectInputStream ois = new ObjectInputStream(is);
+            message = (String)ois.readObject();
+            if(message.equals("OK")){
+                System.out.println(message);
+                addUser(s);
+            }else{
+                JOptionPane.showMessageDialog(messagePane, "Error");
+            }
+            ois.close();
+            is.close();
+            os.close();
+            s.close();            
+        }catch(Exception e){
+            System.err.println("Error: " + e.getMessage());
+            e.printStackTrace(System.err);
+        }
     }//GEN-LAST:event_addUserBtnActionPerformed
 
+    private void addUser(Socket s){
+        try{
+            User u;
+            if(sUserBtn.isSelected()){
+                u = new User(idBox.getText(), fNameBox.getText(), lNameBox.getText(), emailBox.getText(), passBox.getText(), User.UserType.SUPERUSER);
+            }else{
+                 u = new User(idBox.getText(), fNameBox.getText(), lNameBox.getText(), emailBox.getText(), passBox.getText(), User.UserType.USER);
+            }
+            OutputStream os = s.getOutputStream();
+            ObjectOutputStream oos = new ObjectOutputStream(os);
+            oos.writeObject(u);
+            
+            InputStream is = s.getInputStream();
+            ObjectInputStream ois = new ObjectInputStream(is);
+            String message = (String)ois.readObject();
+            System.out.println(message);
+            if(message.equals("1")){
+                JOptionPane.showMessageDialog(messagePane, "User Added Succesfully");
+            }else{
+                JOptionPane.showMessageDialog(messagePane, "User already Exists");
+            }
+        }catch(Exception e){
+            System.err.println("Error: " + e.getMessage());
+            e.printStackTrace(System.err);
+        }
+    }
+    
     private void removeBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeBtnActionPerformed
         try{
             Socket s = new Socket("localHost", 8765);
@@ -322,12 +374,7 @@ public class UserManagementForm extends javax.swing.JFrame {
         }catch(Exception e){
             System.err.println("Error: " + e.getMessage());
             e.printStackTrace(System.err);
-        }/*
-        if(u.deleteUser(idBox.getText()) == true){
-            JOptionPane.showMessageDialog(messagePane, "User Removed Succesfully");
-        }else{
-            JOptionPane.showMessageDialog(messagePane, "User does not Exists");
-        }*/
+        }
     }//GEN-LAST:event_removeBtnActionPerformed
 
     private void removeUser(Socket s){
@@ -348,7 +395,8 @@ public class UserManagementForm extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(messagePane, "User does not Exists");
             }
         }catch(Exception e){
-            
+            System.err.println("Error: " + e.getMessage());
+            e.printStackTrace(System.err);
         }     
     }
     /**
