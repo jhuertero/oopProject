@@ -7,6 +7,11 @@ package applicationgui;
 
 
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.List;
 import java.util.ArrayList;
 /**
@@ -21,16 +26,14 @@ public class CameraHandler {
         cameras = new ArrayList<>();
     }
     
-  public boolean addCamera (String id, String deviceName, String serialNumber, String condition, Device.deviceType type, String cameraType, String megapixel, String storageCapacity, String storageType){ 
+  public boolean addCamera (Camera c){ 
       for (Camera camera: cameras) {
-            if (camera.getId().equals(id)) {
+            if (camera.getId().equals(c.getId())) {
                 return false;
             }
         }
-     Camera d = new Camera ( id, deviceName, serialNumber, condition, type, cameraType, megapixel, storageCapacity, storageType);
-      cameras.add(d);
-      return true;
-      
+      cameras.add(c);
+      return true;      
   }
     
   public Camera getCamera(String id){
@@ -76,5 +79,38 @@ public class CameraHandler {
                  System.out.println("Camera removed");
             }
         }
+    }
+  
+  public void SerializeCamera() {
+        try {
+            FileOutputStream fileOut = new FileOutputStream("cameras.ser");
+            ObjectOutputStream out = new ObjectOutputStream(fileOut);
+            out.writeObject(cameras);
+            out.close();
+            fileOut.close();
+            System.out.println("Serialized data is saved in cameras.ser");
+        } catch (IOException i) {
+            i.printStackTrace();
+        }
+    }
+	
+    public void DeserializeCameraList( ) {
+        try {
+            FileInputStream fileIn = new FileInputStream("cameras.ser");
+            ObjectInputStream in = new ObjectInputStream(fileIn);
+            cameras = (List<Camera>) in.readObject();
+            in.close();
+            fileIn.close();
+        } catch (IOException i) {
+            i.printStackTrace();
+            return;
+        } catch (ClassNotFoundException c) {
+            System.out.println("Camera class not found");
+            c.printStackTrace();
+            return;
+        }
+        System.out.println("Deserialized cameras.ser Contents ...");
+        for(Camera e : cameras )
+            System.out.println(e.toString());        
     }
 }
