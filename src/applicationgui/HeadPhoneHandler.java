@@ -21,16 +21,14 @@ public class HeadPhoneHandler {
         headphones = new ArrayList<>();
     }
     
-  public boolean addHeadPhones (String id, String deviceName, String serialNumber, String condition, Device.deviceType type, String headphonesType, boolean hasMic, boolean hasVolumeControl, int cordLength, double plugDiameter){ 
+  public boolean addHeadPhones (Headphones hp){ 
     for (Headphones headphone: headphones) {
-        if (headphone.getId().equals(id)) {
+        if (headphone.getId().equals(hp.getId())) {
             return false;
         }
     }
-    Headphones h = new Headphones (id, deviceName, serialNumber, condition, type, headphonesType, hasMic, hasVolumeControl, cordLength, plugDiameter);
-    headphones.add(h);
-    return true;
-      
+    headphones.add(hp);
+    return true;      
   }
     
   public Headphones getHeadphones(String id){
