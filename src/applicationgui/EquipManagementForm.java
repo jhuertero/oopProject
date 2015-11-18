@@ -6,6 +6,11 @@
 package applicationgui;
 
 
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
+import java.net.Socket;
 import javax.swing.JOptionPane;
 
 /**
@@ -598,16 +603,63 @@ public class EquipManagementForm extends javax.swing.JFrame {
     }//GEN-LAST:event_laptopCheckActionPerformed
 
     private void addCameraBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addCameraBtnActionPerformed
-        if(c.addCamera(bCodeBox.getText(), deviceBox.getText(), serialBox.getText(), condBox.getText(), Device.deviceType.camera, cTypeBox.getText(), mpBox.getText(), scBox.getText(), stBox.getText()) != false){
+        
+        /*if(c.addCamera(bCodeBox.getText(), deviceBox.getText(), serialBox.getText(), condBox.getText(), Device.deviceType.camera, cTypeBox.getText(), mpBox.getText(), scBox.getText(), stBox.getText()) != false){
                 Camera ca;
                 ca = c.getCamera(bCodeBox.getText());
                 System.out.println(ca.toString());
                 JOptionPane.showMessageDialog(messagePane, "Camera Added Succesfully");
             }else{
                 JOptionPane.showMessageDialog(messagePane, "Camera with same Barcode already Exists");
+            }*/
+        try{
+            Socket s = new Socket("localHost", 8765);
+            String message = "addCamera";
+            OutputStream os = s.getOutputStream();
+            ObjectOutputStream oos = new ObjectOutputStream(os);
+            oos.writeObject(message);
+            
+            InputStream is = s.getInputStream();
+            ObjectInputStream ois = new ObjectInputStream(is);
+            message = (String)ois.readObject();
+            if(message.equals("OK")){
+                System.out.println(message);
+                addCamera(s);
+            }else{
+                JOptionPane.showMessageDialog(messagePane, "Error");
             }
+            ois.close();
+            is.close();
+            os.close();
+            s.close();            
+        }catch(Exception e){
+            System.err.println("Error: " + e.getMessage());
+            e.printStackTrace(System.err);
+        }
     }//GEN-LAST:event_addCameraBtnActionPerformed
 
+    private void addCamera(Socket s){
+        try{
+            Camera ca = new Camera(bCodeBox.getText(), deviceBox.getText(), serialBox.getText(), condBox.getText(), Device.deviceType.camera, cTypeBox.getText(), mpBox.getText(), scBox.getText(), stBox.getText());
+            OutputStream os = s.getOutputStream();
+            ObjectOutputStream oos = new ObjectOutputStream(os);
+            oos.writeObject(ca);
+            
+            InputStream is = s.getInputStream();
+            ObjectInputStream ois = new ObjectInputStream(is);
+            String message = (String)ois.readObject();
+            System.out.println(message);
+            if(message.equals("1")){
+                JOptionPane.showMessageDialog(messagePane, "Camera Added Succesfully");
+            }else{
+                JOptionPane.showMessageDialog(messagePane, "Camera already Exists");
+            }
+        }catch(Exception e){
+            System.err.println("Error: " + e.getMessage());
+            e.printStackTrace(System.err);
+        }
+    }
+    
     private void addHPActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addHPActionPerformed
         int cl;
         double cd;
