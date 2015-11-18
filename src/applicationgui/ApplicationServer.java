@@ -27,16 +27,17 @@ public class ApplicationServer {
         ph.DeserializeUserList();
         uh.DeserializeUserList();
         ch.DeserializeCameraList();
-        RequestHandler rh;
         while(true){
             try{
                 String message;
                 final ServerSocket ss = new ServerSocket(SERVER_PORT);
+                
                 Socket s = ss.accept();
                 InputStream is = s.getInputStream();
                 ObjectInputStream ois = new ObjectInputStream(is);
                 message = (String)ois.readObject();
                 System.out.println(message);
+                
                 if(message.equals("login") == true){
                     message = "OK";
                     OutputStream os = s.getOutputStream();
