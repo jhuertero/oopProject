@@ -249,6 +249,11 @@ public class EquipManagementForm extends javax.swing.JFrame {
         jLabel7.setText("Disk Size:");
 
         addComputerBtn.setText("Add");
+        addComputerBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addComputerBtnActionPerformed(evt);
+            }
+        });
 
         screenLabel.setText("Screen Size:");
 
@@ -603,15 +608,6 @@ public class EquipManagementForm extends javax.swing.JFrame {
     }//GEN-LAST:event_laptopCheckActionPerformed
 
     private void addCameraBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addCameraBtnActionPerformed
-        
-        /*if(c.addCamera(bCodeBox.getText(), deviceBox.getText(), serialBox.getText(), condBox.getText(), Device.deviceType.camera, cTypeBox.getText(), mpBox.getText(), scBox.getText(), stBox.getText()) != false){
-                Camera ca;
-                ca = c.getCamera(bCodeBox.getText());
-                System.out.println(ca.toString());
-                JOptionPane.showMessageDialog(messagePane, "Camera Added Succesfully");
-            }else{
-                JOptionPane.showMessageDialog(messagePane, "Camera with same Barcode already Exists");
-            }*/
         try{
             Socket s = new Socket("localHost", 8765);
             String message = "addCamera";
@@ -666,19 +662,67 @@ public class EquipManagementForm extends javax.swing.JFrame {
         try{
             cl = Integer.parseInt(cordBox.getText());
             cd = Double.parseDouble(plugBox.getText());
-        if(h.addHeadPhones(bCodeBox.getText(), deviceBox.getText(), serialBox.getText(), condBox.getText(), Device.deviceType.headphones, hpTypeBox.getText(), micCheck.isSelected(), volumeCheck.isSelected(), cl, cd) != false){
-                Headphones hp;
-                hp = h.getHeadphones(bCodeBox.getText());
-                System.out.println(hp.toString());
-                JOptionPane.showMessageDialog(messagePane, "Camera Added Succesfully");
+           
+            try{
+            Headphones h = new Headphones(bCodeBox.getText(), deviceBox.getText(), serialBox.getText(), condBox.getText(), Device.deviceType.headphones, hpTypeBox.getText(), micCheck.isSelected(), volumeCheck.isSelected(), cl, cd);
+            Socket s = new Socket("localHost", 8765);
+            String message = "addHeadphones";
+            OutputStream os = s.getOutputStream();
+            ObjectOutputStream oos = new ObjectOutputStream(os);
+            oos.writeObject(message);
+            
+            InputStream is = s.getInputStream();
+            ObjectInputStream ois = new ObjectInputStream(is);
+            message = (String)ois.readObject();
+            System.out.println(message);
+            
+            if(message.equals("OK")){
+                System.out.println(message);
+                addHeadphone(s, h);
             }else{
-                JOptionPane.showMessageDialog(messagePane, "Camera with same Barcode already Exists");
+                JOptionPane.showMessageDialog(messagePane, "Error");
+            }
+            ois.close();
+            is.close();
+            os.close();
+            s.close();                  
+            }catch(Exception e){
+                
             }
         }catch (NumberFormatException e){
             JOptionPane.showMessageDialog(messagePane, "Invalid Cord Length or Cord Diameter input");
             System.out.println(e.toString());
         }
     }//GEN-LAST:event_addHPActionPerformed
+
+    private void addHeadphone(Socket s, Headphones h){
+        try{
+            OutputStream os = s.getOutputStream();
+            ObjectOutputStream oos = new ObjectOutputStream(os);
+            oos.writeObject(h);
+            
+            InputStream is = s.getInputStream();
+            ObjectInputStream ois = new ObjectInputStream(is);
+            String message = (String)ois.readObject();
+            System.out.println(message);
+            if(message.equals("1")){
+                JOptionPane.showMessageDialog(messagePane, "Headphone Added Succesfully");
+            }else{
+                JOptionPane.showMessageDialog(messagePane, "Headphone already Exists");
+            }
+        }catch(Exception e){
+            System.err.println("Error: " + e.getMessage());
+            e.printStackTrace(System.err);
+        }
+    }
+    
+    private void addComputerBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addComputerBtnActionPerformed
+        if(laptopCheck.isSelected() != true){
+            
+        }else{
+            
+        }
+    }//GEN-LAST:event_addComputerBtnActionPerformed
 
     /**
      * @param args the command line arguments
