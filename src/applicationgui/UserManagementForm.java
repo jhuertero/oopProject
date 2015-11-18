@@ -299,7 +299,13 @@ public class UserManagementForm extends javax.swing.JFrame {
         
         try{
             Socket s = new Socket("localHost", 8765);
-            String message = "addUser";
+             String message;
+             
+            if(patronBtn.isSelected() != true)
+                message = "addUser";
+            else
+                message = "addPatron";
+            
             OutputStream os = s.getOutputStream();
             ObjectOutputStream oos = new ObjectOutputStream(os);
             oos.writeObject(message);
@@ -307,6 +313,7 @@ public class UserManagementForm extends javax.swing.JFrame {
             InputStream is = s.getInputStream();
             ObjectInputStream ois = new ObjectInputStream(is);
             message = (String)ois.readObject();
+            
             if(message.equals("OK")){
                 System.out.println(message);
                 addUser(s);
@@ -325,11 +332,13 @@ public class UserManagementForm extends javax.swing.JFrame {
 
     private void addUser(Socket s){
         try{
-            User u;
-            if(sUserBtn.isSelected()){
+            Person u;
+            if(sUserBtn.isSelected() == true){
                 u = new User(idBox.getText(), fNameBox.getText(), lNameBox.getText(), emailBox.getText(), passBox.getText(), User.UserType.SUPERUSER);
-            }else{
+            }else if(userBtn.isSelected() == true){
                  u = new User(idBox.getText(), fNameBox.getText(), lNameBox.getText(), emailBox.getText(), passBox.getText(), User.UserType.USER);
+            }else{
+                u = new Person();
             }
             OutputStream os = s.getOutputStream();
             ObjectOutputStream oos = new ObjectOutputStream(os);
