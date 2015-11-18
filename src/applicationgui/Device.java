@@ -13,7 +13,7 @@ package applicationgui;
 
 
 
-public class Device {
+public class Device implements java.io.Serializable{
     
     public enum deviceType {
     computer, laptop, headphones, camera
