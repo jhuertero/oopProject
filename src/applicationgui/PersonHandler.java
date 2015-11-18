@@ -33,15 +33,14 @@ public class PersonHandler {
     }
     
     public Person getPerson(String id){
-        Person p = new Person();
+        Person p;
         for(int i = 0; i < persons.size(); i++){
             if(persons.get(i).getID().equals(id)){
-                p.setID(persons.get(i).getID());
-                p.setFirstName( persons.get(i).getFirstName());
-                p.setLastName( persons.get(i).getLastName());
-                p.setEmail( persons.get(i).getEmail());
+                p = persons.get(i);
+                return p;
             }
         }
+        p = new Person();
         return p;
     }
     
