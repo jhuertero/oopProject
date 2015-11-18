@@ -48,6 +48,15 @@ public class ApplicationServer {
                     System.out.println(message);
                     oos.close();
                     os.close();
+                }else if(message.equals("addUser")){
+                    message = "OK";
+                    OutputStream os = s.getOutputStream();
+                    ObjectOutputStream oos = new ObjectOutputStream(os);
+                    oos.writeObject(message);
+                    addUser(s, uh);
+                    System.out.println(message);
+                    oos.close();
+                    os.close();
                 }
                 ois.close();
                 is.close();
@@ -110,6 +119,31 @@ public class ApplicationServer {
             User u = (User)ois.readObject();
             System.out.println(u.getID());
             if(uh.deleteUser(u.getID()) == true){
+                String message = "1";
+                OutputStream os = s.getOutputStream();
+                ObjectOutputStream oos = new ObjectOutputStream(os);
+                oos.writeObject(message);
+                os.close();
+            }else{
+                String message = "-1";
+                OutputStream os = s.getOutputStream();
+                ObjectOutputStream oos = new ObjectOutputStream(os);
+                oos.writeObject(message);
+                os.close();
+            }
+        }catch(Exception e){
+            System.err.println("Error: " + e.getMessage());
+            e.printStackTrace(System.err);
+        }
+    }
+    
+    private static void addUser(Socket s, UserHandler uh){
+        try{
+            InputStream is = s.getInputStream();
+            ObjectInputStream ois = new ObjectInputStream(is);
+            User u = (User)ois.readObject();
+            
+            if(uh.addUser(u) == true){
                 String message = "1";
                 OutputStream os = s.getOutputStream();
                 ObjectOutputStream oos = new ObjectOutputStream(os);
