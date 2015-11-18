@@ -21,6 +21,7 @@ public class ApplicationServer {
     public static void main(String[] args) {
         UserHandler uh = new UserHandler();
         CameraHandler ch = new CameraHandler();
+        HeadPhoneHandler hh = new HeadPhoneHandler();
         uh.DeserializeUserList();
         RequestHandler rh;
         while(true){
@@ -64,6 +65,15 @@ public class ApplicationServer {
                     ObjectOutputStream oos = new ObjectOutputStream(os);
                     oos.writeObject(message);
                     addCamera(s, ch);
+                    System.out.println(message);
+                    oos.close();
+                    os.close();
+                }else if(message.equals("addHeadphones")){
+                    message = "OK";
+                    OutputStream os = s.getOutputStream();
+                    ObjectOutputStream oos = new ObjectOutputStream(os);
+                    oos.writeObject(message);
+                    addHeadphones(s, hh);
                     System.out.println(message);
                     oos.close();
                     os.close();
@@ -179,6 +189,31 @@ public class ApplicationServer {
             Camera c = (Camera)ois.readObject();
             
             if(ch.addCamera(c) == true){
+                String message = "1";
+                OutputStream os = s.getOutputStream();
+                ObjectOutputStream oos = new ObjectOutputStream(os);
+                oos.writeObject(message);
+                os.close();
+            }else{
+                String message = "-1";
+                OutputStream os = s.getOutputStream();
+                ObjectOutputStream oos = new ObjectOutputStream(os);
+                oos.writeObject(message);
+                os.close();
+            }
+        }catch(Exception e){
+            System.err.println("Error: " + e.getMessage());
+            e.printStackTrace(System.err);
+        }
+    }
+    
+    private static void addHeadphones(Socket s, HeadPhoneHandler hh){
+        try{
+            InputStream is = s.getInputStream();
+            ObjectInputStream ois = new ObjectInputStream(is);
+            Headphones hp = (Headphones)ois.readObject();
+            
+            if(hh.addHeadPhones(hp) == true){
                 String message = "1";
                 OutputStream os = s.getOutputStream();
                 ObjectOutputStream oos = new ObjectOutputStream(os);
