@@ -4,6 +4,11 @@
  * and open the template in the editor.
  */
 package applicationgui;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.List;
 import java.util.ArrayList;
 /**
@@ -17,9 +22,14 @@ public class PersonHandler {
         persons = new ArrayList<Person>();
     }
     
-    public void addPerson(String id, String firstName, String lastName, String email){
-        Person p = new Person(id, firstName, lastName, email);
+    public boolean addPerson(Person p){
+        for (Person person : persons) {
+            if (person.getID().equals(p.getID())) {
+                return false;
+            }
+        }
         persons.add(p);
+        return true;
     }
     
     public Person getPerson(String id){
@@ -54,5 +64,39 @@ public class PersonHandler {
                  System.out.println("person removed");
             }
         }
+    }
+    
+    public void SerializeUser() {
+        try {
+            FileOutputStream fileOut = new FileOutputStream("persons.ser");
+            ObjectOutputStream out = new ObjectOutputStream(fileOut);
+            out.writeObject(persons);
+            out.close();
+            fileOut.close();
+            System.out.println("Serialized data is saved in Persons.ser");
+        } catch (IOException i) {
+            i.printStackTrace();
+        }
+    }
+	
+	public void DeserializeUserList( ) {
+        try {
+            FileInputStream fileIn = new FileInputStream("persons.ser");
+            ObjectInputStream in = new ObjectInputStream(fileIn);
+            persons = (List<Person>) in.readObject();
+            in.close();
+            fileIn.close();
+        } catch (IOException i) {
+            i.printStackTrace();
+            return;
+        } catch (ClassNotFoundException c) {
+            System.out.println("User class not found");
+            c.printStackTrace();
+            return;
+        }
+        
+        System.out.println("Deserialized persons.ser Contents ...");
+        for(Person p : persons )
+            System.out.println(p.toString());        
     }
 }
