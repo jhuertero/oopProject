@@ -21,13 +21,12 @@ public class UserHandler {
         users = new ArrayList<>();
     }
     
-    public boolean addUser(String id, String firstName, String lastName, String email, String password, User.UserType type){
+    public boolean addUser(User u){
         for (User user : users) {
-            if (user.getID().equals(id)) {
+            if (user.getID().equals(u.getID())) {
                 return false;
             }
         }
-        User u = new User(id, firstName, lastName, email, password, type);
         users.add(u);
         return true;
     }
