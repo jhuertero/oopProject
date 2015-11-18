@@ -20,8 +20,9 @@ public class ApplicationServer {
     public static final int SERVER_PORT = 8765;
     public static void main(String[] args) {
         UserHandler uh = new UserHandler();
+        CameraHandler ch = new CameraHandler();
         uh.DeserializeUserList();
-        
+        RequestHandler rh;
         while(true){
             try{
                 String message;
@@ -30,7 +31,7 @@ public class ApplicationServer {
                 InputStream is = s.getInputStream();
                 ObjectInputStream ois = new ObjectInputStream(is);
                 message = (String)ois.readObject();
-                
+                System.out.println(message);
                 if(message.equals("login") == true){
                     message = "OK";
                     OutputStream os = s.getOutputStream();
@@ -54,6 +55,15 @@ public class ApplicationServer {
                     ObjectOutputStream oos = new ObjectOutputStream(os);
                     oos.writeObject(message);
                     addUser(s, uh);
+                    System.out.println(message);
+                    oos.close();
+                    os.close();
+                }else if(message.equals("addCamera")){
+                    message = "OK";
+                    OutputStream os = s.getOutputStream();
+                    ObjectOutputStream oos = new ObjectOutputStream(os);
+                    oos.writeObject(message);
+                    addCamera(s, ch);
                     System.out.println(message);
                     oos.close();
                     os.close();
@@ -144,6 +154,31 @@ public class ApplicationServer {
             User u = (User)ois.readObject();
             
             if(uh.addUser(u) == true){
+                String message = "1";
+                OutputStream os = s.getOutputStream();
+                ObjectOutputStream oos = new ObjectOutputStream(os);
+                oos.writeObject(message);
+                os.close();
+            }else{
+                String message = "-1";
+                OutputStream os = s.getOutputStream();
+                ObjectOutputStream oos = new ObjectOutputStream(os);
+                oos.writeObject(message);
+                os.close();
+            }
+        }catch(Exception e){
+            System.err.println("Error: " + e.getMessage());
+            e.printStackTrace(System.err);
+        }
+    }
+    
+    private static void addCamera(Socket s, CameraHandler ch){
+        try{
+            InputStream is = s.getInputStream();
+            ObjectInputStream ois = new ObjectInputStream(is);
+            Camera c = (Camera)ois.readObject();
+            
+            if(ch.addCamera(c) == true){
                 String message = "1";
                 OutputStream os = s.getOutputStream();
                 ObjectOutputStream oos = new ObjectOutputStream(os);
