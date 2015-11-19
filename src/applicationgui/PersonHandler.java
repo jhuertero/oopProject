@@ -65,7 +65,7 @@ public class PersonHandler {
         }
     }
     
-    public void SerializeUser() {
+    public void SerializePerson() {
         try {
             FileOutputStream fileOut = new FileOutputStream("persons.ser");
             ObjectOutputStream out = new ObjectOutputStream(fileOut);
@@ -78,7 +78,7 @@ public class PersonHandler {
         }
     }
 	
-	public void DeserializeUserList( ) {
+	public void DeserializePersonList( ) {
         try {
             FileInputStream fileIn = new FileInputStream("persons.ser");
             ObjectInputStream in = new ObjectInputStream(fileIn);
@@ -89,7 +89,7 @@ public class PersonHandler {
             i.printStackTrace();
             return;
         } catch (ClassNotFoundException c) {
-            System.out.println("User class not found");
+            System.out.println("Person class not found");
             c.printStackTrace();
             return;
         }
