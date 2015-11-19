@@ -275,36 +275,9 @@ public class UserManagementForm extends javax.swing.JFrame {
     }//GEN-LAST:event_formWindowClosed
 
     private void addUserBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addUserBtnActionPerformed
-        /*if(userBtn.isSelected()){
-            if(u.addUser(idBox.getText(), fNameBox.getText(), lNameBox.getText(), emailBox.getText(), passBox.getText(), User.UserType.USER) != false){;
-                User p;
-                p = u.getUser(idBox.getText());
-                System.out.println(p.toString());
-                JOptionPane.showMessageDialog(messagePane, "User Added Succesfully");
-            }else{
-                JOptionPane.showMessageDialog(messagePane, "User with same ID already Exists");
-                System.out.println("User already exists");
-            }
-        }else if(sUserBtn.isSelected()){
-            if(u.addUser(idBox.getText(), fNameBox.getText(), lNameBox.getText(), emailBox.getText(), passBox.getText(), User.UserType.SUPERUSER) != false){;
-                User p;
-                p = u.getUser(idBox.getText());
-                System.out.println(p.toString());
-                JOptionPane.showMessageDialog(messagePane, "User Added Succesfully");
-            }else{
-                JOptionPane.showMessageDialog(messagePane, "User with same ID already Exists");
-                System.out.println("User already exists");
-            }
-        }*/        
-        
         try{
             Socket s = new Socket("localHost", 8765);
-             String message;
-             
-            if(patronBtn.isSelected() != true)
-                message = "addUser";
-            else
-                message = "addPatron";
+             String message = "addPerson";
             
             OutputStream os = s.getOutputStream();
             ObjectOutputStream oos = new ObjectOutputStream(os);
@@ -316,7 +289,7 @@ public class UserManagementForm extends javax.swing.JFrame {
             
             if(message.equals("OK")){
                 System.out.println(message);
-                addUser(s);
+                addPerson(s);
             }else{
                 JOptionPane.showMessageDialog(messagePane, "Error");
             }
@@ -330,7 +303,7 @@ public class UserManagementForm extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_addUserBtnActionPerformed
 
-    private void addUser(Socket s){
+    private void addPerson(Socket s){
         try{
             Person u;
             if(sUserBtn.isSelected() == true){
@@ -338,7 +311,8 @@ public class UserManagementForm extends javax.swing.JFrame {
             }else if(userBtn.isSelected() == true){
                  u = new User(idBox.getText(), fNameBox.getText(), lNameBox.getText(), emailBox.getText(), passBox.getText(), User.UserType.USER);
             }else{
-                u = new Person();
+                //TO-DO add a patron class and initialize a patron object here
+                u = null;
             }
             OutputStream os = s.getOutputStream();
             ObjectOutputStream oos = new ObjectOutputStream(os);
@@ -372,7 +346,7 @@ public class UserManagementForm extends javax.swing.JFrame {
             message = (String)ois.readObject();
             if(message.equals("OK")){
                 System.out.println(message);
-                removeUser(s);
+                removePerson(s);
             }else{
                 JOptionPane.showMessageDialog(messagePane, "Error");
             }
@@ -386,26 +360,24 @@ public class UserManagementForm extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_removeBtnActionPerformed
 
-    private void removeUser(Socket s){
+    private void removePerson(Socket s){
         try{
-            User u = new User();
-            u.setID(idBox.getText());
+            String id = idBox.getText();
             OutputStream os = s.getOutputStream();
             ObjectOutputStream oos = new ObjectOutputStream(os);
-            oos.writeObject(u);
+            oos.writeObject(id);
             
             InputStream is = s.getInputStream();
             ObjectInputStream ois = new ObjectInputStream(is);
             String message = (String)ois.readObject();
             System.out.println(message);
             if(message.equals("1")){
-                JOptionPane.showMessageDialog(messagePane, "User Removed Succesfully");
+                JOptionPane.showMessageDialog(messagePane, "Person Removed Succesfully");
             }else{
-                JOptionPane.showMessageDialog(messagePane, "User does not Exists");
+                JOptionPane.showMessageDialog(messagePane, "Person does not Exists");
             }
         }catch(Exception e){
             System.err.println("Error: " + e.getMessage());
-            e.printStackTrace(System.err);
         }     
     }
     /**
