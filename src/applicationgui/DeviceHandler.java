@@ -40,7 +40,7 @@ public class DeviceHandler {
     return true;      
   }
     
-  public Device getDevices(String id){
+  public Device getDevice(String id){
         Device d;
         for(int i = 0; i < devices.size(); i++){
             if(devices.get(i).getId().equals(id)){
@@ -48,7 +48,7 @@ public class DeviceHandler {
                 return d;
             }
         }
-        d = new Device();
+        d = null;
         return d;
     }
 
@@ -64,15 +64,16 @@ public class DeviceHandler {
         }
     }
 
-  public void deleteDevice(String id){
+  public boolean deleteDevice(String id){
         Device p;
         for(int i = 0; i < devices.size(); i++){
             if(devices.get(i).getId().equals(id)){
                  p = devices.get(i);
                  devices.remove(p);
-                 System.out.println("person removed");
+                 return true;
             }
         }
+        return false;
     }
   
   public void SerializeDevice() {
