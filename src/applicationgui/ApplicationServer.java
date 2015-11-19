@@ -20,13 +20,16 @@ public class ApplicationServer {
     public static final int SERVER_PORT = 8765;
     public static void main(String[] args) {
         UserHandler uh = new UserHandler();
+        DeviceHandler dh = new DeviceHandler();
         CameraHandler ch = new CameraHandler();
         HeadPhoneHandler hh = new HeadPhoneHandler();
         PersonHandler ph = new PersonHandler();
         
-        ph.DeserializeUserList();
+        ph.DeserializePersonList();
         uh.DeserializeUserList();
         ch.DeserializeCameraList();
+        dh.DeserializeDeviceList();
+        
         while(true){
             try{
                 String message;
@@ -64,21 +67,12 @@ public class ApplicationServer {
                     System.out.println(message);
                     oos.close();
                     os.close();
-                }else if(message.equals("addCamera")){
+                }else if(message.equals("addDevice")){
                     message = "OK";
                     OutputStream os = s.getOutputStream();
                     ObjectOutputStream oos = new ObjectOutputStream(os);
                     oos.writeObject(message);
-                    addCamera(s, ch);
-                    System.out.println(message);
-                    oos.close();
-                    os.close();
-                }else if(message.equals("addHeadphones")){
-                    message = "OK";
-                    OutputStream os = s.getOutputStream();
-                    ObjectOutputStream oos = new ObjectOutputStream(os);
-                    oos.writeObject(message);
-                    addHeadphones(s, hh);
+                    addDevice(s, dh);
                     System.out.println(message);
                     oos.close();
                     os.close();
@@ -174,7 +168,7 @@ public class ApplicationServer {
                 ObjectOutputStream oos = new ObjectOutputStream(os);
                 oos.writeObject(message);
                 os.close();
-                ph.SerializeUser();
+                ph.SerializePerson();
             }else{
                 String message = "-1";
                 OutputStream os = s.getOutputStream();
@@ -188,18 +182,19 @@ public class ApplicationServer {
         }
     }
     
-    private static void addCamera(Socket s, CameraHandler ch){
+    private static void addDevice(Socket s, DeviceHandler dh){
         try{
             InputStream is = s.getInputStream();
             ObjectInputStream ois = new ObjectInputStream(is);
-            Camera c = (Camera)ois.readObject();
+            Device c = (Device)ois.readObject();
             
-            if(ch.addCamera(c) == true){
+            if(dh.addDevice(c) == true){
                 String message = "1";
                 OutputStream os = s.getOutputStream();
                 ObjectOutputStream oos = new ObjectOutputStream(os);
                 oos.writeObject(message);
                 os.close();
+                dh.SerializeDevice();
             }else{
                 String message = "-1";
                 OutputStream os = s.getOutputStream();
@@ -207,31 +202,6 @@ public class ApplicationServer {
                 oos.writeObject(message);
                 os.close();
                 
-            }
-        }catch(Exception e){
-            System.err.println("Error: " + e.getMessage());
-            e.printStackTrace(System.err);
-        }
-    }
-    
-    private static void addHeadphones(Socket s, HeadPhoneHandler hh){
-        try{
-            InputStream is = s.getInputStream();
-            ObjectInputStream ois = new ObjectInputStream(is);
-            Headphones hp = (Headphones)ois.readObject();
-            
-            if(hh.addHeadPhones(hp) == true){
-                String message = "1";
-                OutputStream os = s.getOutputStream();
-                ObjectOutputStream oos = new ObjectOutputStream(os);
-                oos.writeObject(message);
-                os.close();
-            }else{
-                String message = "-1";
-                OutputStream os = s.getOutputStream();
-                ObjectOutputStream oos = new ObjectOutputStream(os);
-                oos.writeObject(message);
-                os.close();
             }
         }catch(Exception e){
             System.err.println("Error: " + e.getMessage());
