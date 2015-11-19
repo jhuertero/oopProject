@@ -146,6 +146,8 @@ public class TransactionForm extends javax.swing.JFrame {
         });
     }
 
+    //TO-DO add a transaction method
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton checkInButton;
     private javax.swing.JButton checkOutButton;
