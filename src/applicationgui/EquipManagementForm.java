@@ -246,7 +246,7 @@ public class EquipManagementForm extends javax.swing.JFrame {
 
         jLabel7.setText("Disk Size:");
 
-        addComputerBtn.setText("Add");
+        addComputerBtn.setText("Submit");
         addComputerBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 addComputerBtnActionPerformed(evt);
@@ -278,17 +278,14 @@ public class EquipManagementForm extends javax.swing.JFrame {
                         .addComponent(diskBox, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(computerPanelLayout.createSequentialGroup()
                         .addGap(82, 82, 82)
-                        .addGroup(computerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(computerPanelLayout.createSequentialGroup()
-                                .addComponent(screenLabel)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(screenBox, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(34, 34, 34)
-                                .addComponent(touchCheck))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, computerPanelLayout.createSequentialGroup()
-                                .addGap(125, 125, 125)
-                                .addComponent(addComputerBtn)
-                                .addGap(91, 91, 91)))))
+                        .addComponent(screenLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(screenBox, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(34, 34, 34)
+                        .addComponent(touchCheck))
+                    .addGroup(computerPanelLayout.createSequentialGroup()
+                        .addGap(186, 186, 186)
+                        .addComponent(addComputerBtn)))
                 .addContainerGap(40, Short.MAX_VALUE))
         );
         computerPanelLayout.setVerticalGroup(
@@ -320,7 +317,7 @@ public class EquipManagementForm extends javax.swing.JFrame {
 
         jLabel11.setText("Storage Type:");
 
-        CameraBtn.setText("Add");
+        CameraBtn.setText("Submit");
         CameraBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 CameraBtnActionPerformed(evt);
@@ -353,7 +350,7 @@ public class EquipManagementForm extends javax.swing.JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(stBox))))
                     .addGroup(cameraPanelLayout.createSequentialGroup()
-                        .addGap(195, 195, 195)
+                        .addGap(185, 185, 185)
                         .addComponent(CameraBtn)))
                 .addContainerGap(33, Short.MAX_VALUE))
         );
@@ -372,9 +369,9 @@ public class EquipManagementForm extends javax.swing.JFrame {
                     .addComponent(scBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel11)
                     .addComponent(stBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 19, Short.MAX_VALUE)
                 .addComponent(CameraBtn)
-                .addContainerGap(12, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         jLabel12.setText("Headphone Type:");
@@ -387,7 +384,7 @@ public class EquipManagementForm extends javax.swing.JFrame {
 
         volumeCheck.setText("Volume Control");
 
-        addHP.setText("Add");
+        addHP.setText("Submit");
         addHP.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 addHPActionPerformed(evt);
@@ -807,20 +804,18 @@ public class EquipManagementForm extends javax.swing.JFrame {
             cameraPanel.setVisible(true);
             hpPanel.setVisible(false);
             cameraBtn.setSelected(true);
-            CameraBtn.setText("Remove User");
-            CameraBtn.setSize(130, 23);
             
             cTypeBox.setText(c.getCameraType());
             mpBox.setText(c.getMegaPixel());
             scBox.setText(c.getStorageCapacity());
             stBox.setText(c.getStorageType());
-        }else if(d instanceof Headphones){
+        }else if(d instanceof Headphones){ //TO-DO implement for the rest of the devices 
             
         }else if(d instanceof Computer){
-            
+           
         }
     }
-    
+    //TO-DO add a update method
     /**
      * @param args the command line arguments
      */
