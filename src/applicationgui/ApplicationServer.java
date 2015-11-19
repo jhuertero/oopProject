@@ -14,12 +14,11 @@ import java.io.*;
 public class ApplicationServer {
 
     /**
-     * @param args the command line arguments
      */
     
     public static final int SERVER_PORT = 8765;
     public static void main(String[] args) {
-        UserHandler uh = new UserHandler();
+        /*UserHandler uh = new UserHandler();
         DeviceHandler dh = new DeviceHandler();
         PersonHandler ph = new PersonHandler();
         
@@ -101,6 +100,23 @@ public class ApplicationServer {
                 System.err.println("Error: " + e.getMessage());
                 e.printStackTrace(System.err);
             }
+        }*/
+        DeviceHandler dh = new DeviceHandler();
+        PersonHandler ph = new PersonHandler();
+        
+        ph.DeserializePersonList();
+        dh.DeserializeDeviceList();
+        try{
+        final ServerSocket ss = new ServerSocket(SERVER_PORT);
+        Socket sock = null;
+        ServerThread thread = null;
+        while(true){
+            sock = ss.accept();
+            thread = new ServerThread(sock, ph, dh);
+            thread.start();
+        }
+        }catch(Exception e){
+            System.err.println("Error: " + e.getMessage());
         }
     }
     
@@ -281,5 +297,5 @@ public class ApplicationServer {
             System.err.println("Error: " + e.getMessage());
             e.printStackTrace(System.err);
         }
-    }
+    } 
 }
