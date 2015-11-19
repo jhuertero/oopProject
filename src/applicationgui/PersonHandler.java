@@ -54,15 +54,16 @@ public class PersonHandler {
         }
     }
     
-    public void deletePerson(String id){
+    public boolean deletePerson(String id){
         Person p;
         for(int i = 0; i < persons.size(); i++){
             if(persons.get(i).getID().equals(id)){
                  p = persons.get(i);
                  persons.remove(p);
-                 System.out.println("person removed");
+                 return true;
             }
         }
+        return false;
     }
     
     public void SerializePerson() {
