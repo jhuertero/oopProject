@@ -21,13 +21,10 @@ public class ApplicationServer {
     public static void main(String[] args) {
         UserHandler uh = new UserHandler();
         DeviceHandler dh = new DeviceHandler();
-        CameraHandler ch = new CameraHandler();
-        HeadPhoneHandler hh = new HeadPhoneHandler();
         PersonHandler ph = new PersonHandler();
         
         ph.DeserializePersonList();
         uh.DeserializeUserList();
-        ch.DeserializeCameraList();
         dh.DeserializeDeviceList();
         
         while(true){
@@ -73,6 +70,24 @@ public class ApplicationServer {
                     ObjectOutputStream oos = new ObjectOutputStream(os);
                     oos.writeObject(message);
                     addDevice(s, dh);
+                    System.out.println(message);
+                    oos.close();
+                    os.close();
+                }else if(message.equals("removeDevice")){
+                    message = "OK";
+                    OutputStream os = s.getOutputStream();
+                    ObjectOutputStream oos = new ObjectOutputStream(os);
+                    oos.writeObject(message);
+                    removeDevice(s, dh);
+                    System.out.println(message);
+                    oos.close();
+                    os.close();
+                }else if(message.equals("getDevice")){
+                    message = "OK";
+                    OutputStream os = s.getOutputStream();
+                    ObjectOutputStream oos = new ObjectOutputStream(os);
+                    oos.writeObject(message);
+                    getDevice(s, dh);
                     System.out.println(message);
                     oos.close();
                     os.close();
@@ -193,6 +208,65 @@ public class ApplicationServer {
                 OutputStream os = s.getOutputStream();
                 ObjectOutputStream oos = new ObjectOutputStream(os);
                 oos.writeObject(message);
+                os.close();
+                dh.SerializeDevice();
+            }else{
+                String message = "-1";
+                OutputStream os = s.getOutputStream();
+                ObjectOutputStream oos = new ObjectOutputStream(os);
+                oos.writeObject(message);
+                os.close();
+                
+            }
+        }catch(Exception e){
+            System.err.println("Error: " + e.getMessage());
+            e.printStackTrace(System.err);
+        }
+    }
+    
+    private static void removeDevice(Socket s, DeviceHandler dh){
+        try{
+            InputStream is = s.getInputStream();
+            ObjectInputStream ois = new ObjectInputStream(is);
+            String id = (String)ois.readObject();
+            Device d = dh.getDevice(id);
+            if(dh.deleteDevice(d.getId()) == true){
+                String message = "1";
+                OutputStream os = s.getOutputStream();
+                ObjectOutputStream oos = new ObjectOutputStream(os);
+                oos.writeObject(message);
+                os.close();
+                dh.SerializeDevice();
+            }else{
+                String message = "-1";
+                OutputStream os = s.getOutputStream();
+                ObjectOutputStream oos = new ObjectOutputStream(os);
+                oos.writeObject(message);
+                os.close();
+                
+            }
+        }catch(Exception e){
+            System.err.println("Error: " + e.getMessage());
+            e.printStackTrace(System.err);
+        }
+    }
+    
+    private static void getDevice(Socket s, DeviceHandler dh){
+        try{
+            InputStream is = s.getInputStream();
+            ObjectInputStream ois = new ObjectInputStream(is);
+            String id = (String)ois.readObject();
+            Device d = dh.getDevice(id);
+            if(d != null){
+                String message = "1";
+                OutputStream os = s.getOutputStream();
+                ObjectOutputStream oos = new ObjectOutputStream(os);
+                oos.writeObject(message);
+                
+                os = s.getOutputStream();
+                oos = new ObjectOutputStream(os);
+                oos.writeObject(d);
+                
                 os.close();
                 dh.SerializeDevice();
             }else{
