@@ -60,6 +60,9 @@ public class ServerThread extends Thread{
                     case "getDevice":
                         getDevice(socket, dh);
                         break;
+                    case "updateDevice":
+                        updateDevice(socket, dh);
+                        break;
                 }
                 System.out.println(message);
             }
@@ -73,7 +76,15 @@ public class ServerThread extends Thread{
     }
     
     private boolean isValidAction(String action) {
-        final String[] validActions = {"login", "deleteUser", "addPerson", "addDevice", "removeDevice", "getDevice"};
+        final String[] validActions = {
+            "login", 
+            "deleteUser", 
+            "addPerson", 
+            "addDevice", 
+            "removeDevice", 
+            "getDevice", 
+            "udpateDevice"
+        };
         boolean isValid = false;
         for (String validAction : validActions) {
             if (action.equals(validAction)) {
@@ -264,4 +275,35 @@ public class ServerThread extends Thread{
             e.printStackTrace(System.err);
         }
     }
+
+  private synchronized void updateDevice(Socket s, DeviceHandler dh){
+        try{
+            InputStream is = s.getInputStream();
+            ObjectInputStream ois = new ObjectInputStream(is);
+            Device c = (Device)ois.readObject();
+            
+            if(dh.updateDevice(c) == true){
+                String message = "1";
+                OutputStream os = s.getOutputStream();
+                ObjectOutputStream oos = new ObjectOutputStream(os);
+                oos.writeObject(message);
+                os.close();
+                dh.SerializeDevice();
+            }else{
+                String message = "-1";
+                OutputStream os = s.getOutputStream();
+                ObjectOutputStream oos = new ObjectOutputStream(os);
+                oos.writeObject(message);
+                os.close();
+                
+            }
+        }catch(Exception e){
+            System.err.println("Error: " + e.getMessage());
+            e.printStackTrace(System.err);
+        }
+    }
+
+
+
+
 }

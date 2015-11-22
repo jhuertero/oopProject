@@ -52,17 +52,17 @@ public class DeviceHandler {
         return d;
     }
 
-  public void updateDevice(Device d){
-        Device p;
-        for(int i = 0; i < devices.size(); i++){
-            if(devices.get(i).getId().equals(d.getId())){
-                 p = devices.get(i);
-                 devices.remove(p);
-                 devices.add(d);
-                 System.out.println("person removed");
-            }
+ public boolean updateDevice (Device d){ 
+     boolean status = false;
+    for (Device dv: devices) {
+        if (dv.getId().equals(d.getId())) {
+            devices.remove(dv);
+            devices.add(d);
+            status= true;  
         }
     }
+      return status;
+  }
 
   public boolean deleteDevice(String id){
         Device p;
