@@ -6,14 +6,16 @@
 package applicationgui;
 
 
-import java.awt.event.ActionEvent;
+import java.awt.Component;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.Socket;
-import javax.swing.Action;
+import javax.swing.JCheckBox;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 /**
  *
@@ -540,10 +542,16 @@ public class EquipManagementForm extends javax.swing.JFrame {
         laptopCheck.setEnabled(false);
         laptopCheck.setSelected(false);
         computerPanel.setVisible(false);
+        bCodeBox.setEnabled(true);
+        
+        clearPanel(devicePanel);
+        clearPanel(computerPanel);
+        clearPanel(cameraPanel);
+        clearPanel(hpPanel);
     }//GEN-LAST:event_addERBtnActionPerformed
 
     private void computerBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_computerBtnActionPerformed
-        this.setSize(480, 270);
+        this.setSize(480, 280);
         this.setLocationRelativeTo(null);
         laptopCheck.setEnabled(true);
         laptopCheck.setSelected(false);
@@ -585,33 +593,129 @@ public class EquipManagementForm extends javax.swing.JFrame {
             screenBox.setVisible(true);
             touchCheck.setVisible(true);
             addComputerBtn.setLocation(200, 90);
-            this.setSize(480, 310);
+            this.setSize(480, 320);
         }else{
             screenLabel.setVisible(false);
             screenBox.setVisible(false);
             touchCheck.setVisible(false);
             addComputerBtn.setLocation(200, 50);
-            this.setSize(480, 270);
+            this.setSize(480, 280);
         }
     }//GEN-LAST:event_laptopCheckActionPerformed
     
     private void addComputerBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addComputerBtnActionPerformed
-         if(addERBtn.isSelected() == true){
-            addDevice();
+        DeviceManagerAction devMgmtAction = getDeviceManagerAction();
+
+        if ((devMgmtAction == DeviceManagerAction.ADD)
+                || (devMgmtAction == DeviceManagerAction.UPDATE)) {
+            try {
+                Device computer;
+                if (!laptopCheck.isSelected()) {
+                    computer = new Computer(
+                            bCodeBox.getText(),
+                            deviceBox.getText(),
+                            serialBox.getText(),
+                            condBox.getText(),
+                            Device.deviceType.computer,
+                            cpuBox.getText(),
+                            ramBox.getText(),
+                            diskBox.getText());
+                } else {
+                    computer = new Laptop(
+                            bCodeBox.getText(),
+                            deviceBox.getText(),
+                            serialBox.getText(),
+                            condBox.getText(),
+                            Device.deviceType.laptop,
+                            cpuBox.getText(),
+                            ramBox.getText(),
+                            diskBox.getText(),
+                            screenBox.getText(),
+                            touchCheck.isSelected());
+                }
+                switch (devMgmtAction) {
+                    case ADD:
+                        addDevice(computer);
+                        break;
+                    case UPDATE:
+                        updateDevice(computer);
+                        break;
+                }
+            } catch (Exception e) {
+                System.err.println("Error: " + e.getMessage());
+            }
+        } else if (devMgmtAction == DeviceManagerAction.REMOVE) {
+            removeDevice();
         }
     }//GEN-LAST:event_addComputerBtnActionPerformed
 
     private void CameraBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CameraBtnActionPerformed
-        if(addERBtn.isSelected() == true){
-            addDevice();
-        }else if(removeERBtn.isSelected() == true){
+        DeviceManagerAction devMgmtAction = getDeviceManagerAction();
+
+        if ((devMgmtAction == DeviceManagerAction.ADD)
+                || (devMgmtAction == DeviceManagerAction.UPDATE)) {
+            try {
+                Device camera = new Camera(
+                        bCodeBox.getText(),
+                        deviceBox.getText(),
+                        serialBox.getText(),
+                        condBox.getText(),
+                        Device.deviceType.camera,
+                        cTypeBox.getText(),
+                        mpBox.getText(),
+                        scBox.getText(),
+                        stBox.getText()
+                );
+                switch (devMgmtAction) {
+                    case ADD:
+                        addDevice(camera);
+                        break;
+                    case UPDATE:
+                        updateDevice(camera);
+                        break;
+                }
+            } catch (Exception e) {
+                System.err.println("Error: " + e.getMessage());
+            }
+        } else if (devMgmtAction == DeviceManagerAction.REMOVE) {
             removeDevice();
         }
     }//GEN-LAST:event_CameraBtnActionPerformed
 
     private void addHPActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addHPActionPerformed
-        if(addERBtn.isSelected() == true){
-            addDevice();
+        DeviceManagerAction devMgmtAction = getDeviceManagerAction();
+
+        if ((devMgmtAction == DeviceManagerAction.ADD)
+                || (devMgmtAction == DeviceManagerAction.UPDATE)) {
+            try {
+                int cordLength = Integer.parseInt(cordBox.getText());
+                double plugDiameter = Double.parseDouble(plugBox.getText());
+                Device headphones = new Headphones(
+                        bCodeBox.getText(),
+                        deviceBox.getText(),
+                        serialBox.getText(),
+                        condBox.getText(),
+                        Device.deviceType.headphones,
+                        hpTypeBox.getText(),
+                        micCheck.isSelected(),
+                        volumeCheck.isSelected(),
+                        cordLength,
+                        plugDiameter
+                );
+                switch (devMgmtAction) {
+                    case ADD:
+                        addDevice(headphones);
+                        break;
+                    case UPDATE:
+                        updateDevice(headphones);
+                        break;
+                }
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(messagePane, "Invalid Cord Length or Cord Diameter input");
+                System.out.println(e.toString());
+            }
+        } else if (devMgmtAction == DeviceManagerAction.REMOVE) {
+            removeDevice();
         }
     }//GEN-LAST:event_addHPActionPerformed
 
@@ -646,54 +750,60 @@ public class EquipManagementForm extends javax.swing.JFrame {
         retrieveBtn.doClick();
     }//GEN-LAST:event_searchCodeActionPerformed
 
-    private void addDevice() { 
-        try{
-            Device d = null;
-            if(cameraBtn.isSelected() == true){
-                d = new Camera(bCodeBox.getText(), deviceBox.getText(), serialBox.getText(), condBox.getText(), Device.deviceType.camera, cTypeBox.getText(), mpBox.getText(), scBox.getText(), stBox.getText());
-            }else if(hpBtn.isSelected() == true){
-                try{
-                    int cl = Integer.parseInt(cordBox.getText());
-                    double cd = Double.parseDouble(plugBox.getText());
-                    d = new Headphones(bCodeBox.getText(), deviceBox.getText(), serialBox.getText(), condBox.getText(), Device.deviceType.headphones, hpTypeBox.getText(), micCheck.isSelected(), volumeCheck.isSelected(), cl, cd);
-                }catch (NumberFormatException e){
-                    JOptionPane.showMessageDialog(messagePane, "Invalid Cord Length or Cord Diameter input");
-                    System.out.println(e.toString());
-                }
-            }else if(computerBtn.isSelected() == true){
-                if(laptopCheck.isSelected() == true){
-                    
-                }else{
-                    
-                }
+    private void clearPanel(JPanel panel) {
+        for (Component component : panel.getComponents()) {
+            if (component instanceof JTextField) {
+                ((JTextField) component).setText("");
+            } else if (component instanceof JCheckBox) {
+                ((JCheckBox) component).setSelected(false);
             }
-            
+        }
+    }
+    
+    private enum DeviceManagerAction {ADD, REMOVE, UPDATE};
+
+    private DeviceManagerAction getDeviceManagerAction() {
+        DeviceManagerAction devAction = null;
+
+        if (addERBtn.isSelected() == true) {
+            devAction = DeviceManagerAction.ADD;
+        } else if (removeERBtn.isSelected() == true) {
+            devAction = DeviceManagerAction.REMOVE;
+        } else if (updateERBtn.isSelected() == true) {
+            devAction = DeviceManagerAction.UPDATE;
+        }
+
+        return devAction;
+    }
+   
+    private void addDevice(Device device) {
+        try {
             Socket s = new Socket("localHost", 8765);
             String message = "addDevice";
             OutputStream os = s.getOutputStream();
             ObjectOutputStream oos = new ObjectOutputStream(os);
             oos.writeObject(message);
-            
+
             InputStream is = s.getInputStream();
             ObjectInputStream ois = new ObjectInputStream(is);
-            message = (String)ois.readObject();
+            message = (String) ois.readObject();
             System.out.println(message);
-            if(message.equals("OK")){
+            if (message.equals("OK")) {
                 System.out.println(message);
-                addDevice(s,d);
-            }else{
+                addDevice(s, device);
+            } else {
                 JOptionPane.showMessageDialog(messagePane, "Error");
             }
             ois.close();
             is.close();
             os.close();
-            s.close();            
-            
-        }catch(Exception e){
+            s.close();
+
+        } catch (Exception e) {
             System.err.println("Error: " + e.getMessage());
         }
     }
-    
+   
     private void addDevice(Socket s, Device d){
         try{
             OutputStream os = s.getOutputStream();
@@ -762,7 +872,55 @@ public class EquipManagementForm extends javax.swing.JFrame {
             System.err.println("Error: " + e.getMessage());
         }
     }
+
+    private void updateDevice(Device device) {
+        try {
+            Socket s = new Socket("localHost", 8765);
+            String message = "updateDevice";
+            OutputStream os = s.getOutputStream();
+            ObjectOutputStream oos = new ObjectOutputStream(os);
+            oos.writeObject(message);
+
+            InputStream is = s.getInputStream();
+            ObjectInputStream ois = new ObjectInputStream(is);
+            message = (String) ois.readObject();
+            System.out.println(message);
+            if (message.equals("OK")) {
+                System.out.println(message);
+                updateDevice(s, device);
+            } else {
+                JOptionPane.showMessageDialog(messagePane, "Error");
+            }
+            ois.close();
+            is.close();
+            os.close();
+            s.close();
+
+        } catch (Exception e) {
+            System.err.println("Error: " + e.getMessage());
+        }
+    }
     
+    private void updateDevice(Socket s, Device d){
+        try{
+            OutputStream os = s.getOutputStream();
+            ObjectOutputStream oos = new ObjectOutputStream(os);
+            oos.writeObject(d);
+            
+            InputStream is = s.getInputStream();
+            ObjectInputStream ois = new ObjectInputStream(is);
+            String message = (String)ois.readObject();
+            System.out.println(message);
+            if(message.equals("1")){
+                JOptionPane.showMessageDialog(messagePane, "Device Updated Succesfully");
+            }else{
+                JOptionPane.showMessageDialog(messagePane, "Device Does Not Exist");
+            }
+        }catch(Exception e){
+            System.err.println("Error: " + e.getMessage());
+        }
+    }
+        
     private void getDevice(Socket s){
         try{
             OutputStream os = s.getOutputStream();
@@ -818,8 +976,8 @@ public class EquipManagementForm extends javax.swing.JFrame {
             hpBtn.doClick();
             // Display the headphones's information
             hpTypeBox.setText(headphones.getHeadphonesType());
-            cordBox.setText(headphones.getCordLength().toString());
-            plugBox.setText(headphones.getPlugDiameter().toString());
+            cordBox.setText(Integer.toString(headphones.getCordLength()));
+            plugBox.setText(Double.toString(headphones.getPlugDiameter()));
             micCheck.setSelected(headphones.isHasMic());
             volumeCheck.setSelected(headphones.isHasVolumeControl());
         } else if (d instanceof Computer) { //TO-DO implement for the rest of the devices 
@@ -837,7 +995,6 @@ public class EquipManagementForm extends javax.swing.JFrame {
             }
         }
     }
-    //TO-DO add a update method
     /**
      * @param args the command line arguments
      */
