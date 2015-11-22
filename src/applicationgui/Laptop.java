@@ -15,7 +15,19 @@ public class Laptop extends Computer {
     private String screenSize;
     private boolean isTouch;
 
-    public Laptop() {
+    public Laptop(String id,
+            String deviceName,
+            String serialNumber,
+            String condition,
+            Device.deviceType type,
+            String cpu,
+            String ram,
+            String diskSize,
+            String screenSize,
+            boolean isTouch) {
+        super(id, deviceName, serialNumber, condition, type, cpu, ram, diskSize);
+        this.screenSize = screenSize;
+        this.isTouch = isTouch;
     }
 
     /*public Laptop(String id) {
