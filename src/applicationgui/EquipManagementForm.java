@@ -793,6 +793,7 @@ public class EquipManagementForm extends javax.swing.JFrame {
         serialBox.setText(d.getSerialNumber());
         deviceBox.setText(d.getDeviceName());
         condBox.setText(d.getCondition());
+        
         if(d instanceof Camera){
             Camera c = (Camera)d;
             this.setSize(480, 320);
@@ -810,8 +811,15 @@ public class EquipManagementForm extends javax.swing.JFrame {
             scBox.setText(c.getStorageCapacity());
             stBox.setText(c.getStorageType());
         }else if(d instanceof Headphones){ //TO-DO implement for the rest of the devices 
+            Headphones headphones = (Headphones)d;
             
-        }else if(d instanceof Computer){
+            hpTypeBox.setText(headphones.getHeadphonesType());
+            cordBox.setText(headphones.getCordLength().toString());
+            plugBox.setText(headphones.getPlugDiameter().toString());
+            micCheck.setSelected(headphones.isHasMic());
+            volumeCheck.setSelected(headphones.isHasVolumeControl());
+            
+        }else if(d instanceof Computer){ //TO-DO implement for the rest of the devices 
            
         }
     }
