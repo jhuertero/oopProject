@@ -62,11 +62,11 @@ public class Headphones extends Device {
         return hasVolumeControl;
     }
 
-    public Integer getCordLength() {
+    public int getCordLength() {
         return cordLength;
     }
 
-    public Double getPlugDiameter() {
+    public double getPlugDiameter() {
         return plugDiameter;
     }
     
