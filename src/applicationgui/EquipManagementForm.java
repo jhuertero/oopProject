@@ -6,11 +6,13 @@
 package applicationgui;
 
 
+import java.awt.event.ActionEvent;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import javax.swing.Action;
 import javax.swing.JOptionPane;
 
 /**
@@ -133,6 +135,12 @@ public class EquipManagementForm extends javax.swing.JFrame {
         });
 
         eBarcodeLabel.setText("Equipment Barcode:");
+
+        searchCode.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                searchCodeActionPerformed(evt);
+            }
+        });
 
         retrieveBtn.setText("Retrieve Information");
         retrieveBtn.addActionListener(new java.awt.event.ActionListener() {
@@ -535,22 +543,22 @@ public class EquipManagementForm extends javax.swing.JFrame {
     }//GEN-LAST:event_addERBtnActionPerformed
 
     private void computerBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_computerBtnActionPerformed
+        this.setSize(480, 270);
+        this.setLocationRelativeTo(null);
         laptopCheck.setEnabled(true);
         laptopCheck.setSelected(false);
         computerPanel.setVisible(true);
-        this.setSize(480, 270);
         computerPanel.setLocation(0, 160);
         screenLabel.setVisible(false);
         screenBox.setVisible(false);
         touchCheck.setVisible(false);
         addComputerBtn.setLocation(200, 50);
-        this.setLocationRelativeTo(null);
         cameraPanel.setVisible(false);
         hpPanel.setVisible(false);
     }//GEN-LAST:event_computerBtnActionPerformed
 
     private void cameraBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cameraBtnActionPerformed
-        this.setSize(480, 320);
+        this.setSize(480, 325);
         this.setLocationRelativeTo(null);
         laptopCheck.setEnabled(false);
         laptopCheck.setSelected(false);
@@ -558,16 +566,15 @@ public class EquipManagementForm extends javax.swing.JFrame {
         cameraPanel.setLocation(0,160);
         cameraPanel.setVisible(true);
         hpPanel.setVisible(false);
-        
     }//GEN-LAST:event_cameraBtnActionPerformed
 
     private void hpBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hpBtnActionPerformed
+        this.setSize(480, 330);
+        this.setLocationRelativeTo(null);
         laptopCheck.setEnabled(false);
         laptopCheck.setSelected(false);
-        cameraPanel.setVisible(false);
         computerPanel.setVisible(false);
-        this.setSize(480, 320);
-        this.setLocationRelativeTo(null);
+        cameraPanel.setVisible(false);
         hpPanel.setVisible(true);
         hpPanel.setLocation(0,160);
     }//GEN-LAST:event_hpBtnActionPerformed
@@ -634,6 +641,10 @@ public class EquipManagementForm extends javax.swing.JFrame {
             System.err.println("Error: " + e.getMessage());
         }
     }//GEN-LAST:event_retrieveBtnActionPerformed
+
+    private void searchCodeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchCodeActionPerformed
+        retrieveBtn.doClick();
+    }//GEN-LAST:event_searchCodeActionPerformed
 
     private void addDevice() { 
         try{
@@ -794,33 +805,36 @@ public class EquipManagementForm extends javax.swing.JFrame {
         deviceBox.setText(d.getDeviceName());
         condBox.setText(d.getCondition());
         
-        if(d instanceof Camera){
-            Camera c = (Camera)d;
-            this.setSize(480, 320);
-            this.setLocationRelativeTo(null);
-            laptopCheck.setEnabled(false);
-            laptopCheck.setSelected(false);
-            computerPanel.setVisible(false);
-            cameraPanel.setLocation(0,160);
-            cameraPanel.setVisible(true);
-            hpPanel.setVisible(false);
-            cameraBtn.setSelected(true);
-            
+        if (d instanceof Camera) {
+            Camera c = (Camera) d;
+            cameraBtn.doClick();
+            // Display the camera's information
             cTypeBox.setText(c.getCameraType());
             mpBox.setText(c.getMegaPixel());
             scBox.setText(c.getStorageCapacity());
             stBox.setText(c.getStorageType());
-        }else if(d instanceof Headphones){ //TO-DO implement for the rest of the devices 
-            Headphones headphones = (Headphones)d;
-            
+        } else if (d instanceof Headphones) {
+            Headphones headphones = (Headphones) d;
+            hpBtn.doClick();
+            // Display the headphones's information
             hpTypeBox.setText(headphones.getHeadphonesType());
             cordBox.setText(headphones.getCordLength().toString());
             plugBox.setText(headphones.getPlugDiameter().toString());
             micCheck.setSelected(headphones.isHasMic());
             volumeCheck.setSelected(headphones.isHasVolumeControl());
-            
-        }else if(d instanceof Computer){ //TO-DO implement for the rest of the devices 
-           
+        } else if (d instanceof Computer) { //TO-DO implement for the rest of the devices 
+            Computer computer = (Computer) d;
+            computerBtn.doClick();
+            // Display the computers's information
+            cpuBox.setText(computer.getCPU());
+            ramBox.setText(computer.getRAM());
+            diskBox.setText(computer.getDiskSize());
+            // If the copmuter is a laptop, display additional information
+            if (computer instanceof Laptop) {
+                laptopCheck.doClick();
+                screenBox.setText(((Laptop) computer).getScreenSize());
+                touchCheck.setSelected(((Laptop) computer).isIsTouch());
+            }
         }
     }
     //TO-DO add a update method
