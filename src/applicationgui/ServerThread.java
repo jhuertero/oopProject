@@ -89,6 +89,15 @@ public class ServerThread extends Thread{
                     System.out.println(message);
                     oos.close();
                     os.close();
+                }else if(message.equals("updateDevice")){
+                    message = "OK";
+                    OutputStream os = s.getOutputStream();
+                    ObjectOutputStream oos = new ObjectOutputStream(os);
+                    oos.writeObject(message);
+                    updateDevice(s, dh);
+                    System.out.println(message);
+                    oos.close();
+                    os.close();
                 }
                 ois.close();
                 is.close();
@@ -281,4 +290,35 @@ public class ServerThread extends Thread{
             e.printStackTrace(System.err);
         }
     }
+
+  private synchronized void updateDevice(Socket s, DeviceHandler dh){
+        try{
+            InputStream is = s.getInputStream();
+            ObjectInputStream ois = new ObjectInputStream(is);
+            Device c = (Device)ois.readObject();
+            
+            if(dh.updateDevice(c) == true){
+                String message = "1";
+                OutputStream os = s.getOutputStream();
+                ObjectOutputStream oos = new ObjectOutputStream(os);
+                oos.writeObject(message);
+                os.close();
+                dh.SerializeDevice();
+            }else{
+                String message = "-1";
+                OutputStream os = s.getOutputStream();
+                ObjectOutputStream oos = new ObjectOutputStream(os);
+                oos.writeObject(message);
+                os.close();
+                
+            }
+        }catch(Exception e){
+            System.err.println("Error: " + e.getMessage());
+            e.printStackTrace(System.err);
+        }
+    }
+
+
+
+
 }
