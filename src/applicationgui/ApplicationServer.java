@@ -119,7 +119,8 @@ public class ApplicationServer {
             System.err.println("Error: " + e.getMessage());
         }
     }
-    
+
+/*    
     private static void Login(Socket s, PersonHandler ph){
         try{
             InputStream is = s.getInputStream();
@@ -298,4 +299,5 @@ public class ApplicationServer {
             e.printStackTrace(System.err);
         }
     } 
+*/
 }
