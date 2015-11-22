@@ -16,7 +16,18 @@ public class Computer extends Device {
     private String RAM;
     private String diskSize;
 
-    public Computer() {
+    public Computer(String id,
+            String deviceName,
+            String serialNumber,
+            String condition,
+            Device.deviceType type,
+            String cpu,
+            String ram,
+            String diskSize) {
+        super(id, deviceName, serialNumber, condition, type);
+        this.CPU = cpu;
+        this.RAM = ram;
+        this.diskSize = diskSize;
     }
 
     /*public Computer(String id) {
