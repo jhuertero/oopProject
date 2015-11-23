@@ -18,88 +18,82 @@ import java.net.Socket;
 
 //TO-DO add update device, check in and check out socket functions
 public class ServerThread extends Thread{
-    private final Socket s;
+    private final Socket socket;
     DeviceHandler dh;
     PersonHandler ph;
     
     public ServerThread(Socket socket, PersonHandler ph, DeviceHandler dh){
-        this.s = socket;
+        this.socket = socket;
         this.dh = dh;
         this.ph = ph;
     }
     
-    public void run(){
-        try{
-        String message;
-                InputStream is = s.getInputStream();
-                ObjectInputStream ois = new ObjectInputStream(is);
-                message = (String)ois.readObject();
-                System.out.println(message);
-                
-                if(message.equals("login") == true){
-                    message = "OK";
-                    OutputStream os = s.getOutputStream();
-                    ObjectOutputStream oos = new ObjectOutputStream(os);
-                    oos.writeObject(message);
-                    Login(s, ph);
-                    oos.close();
-                    os.close();
-                }else if(message.equals("deleteUser")){
-                    message = "OK";
-                    OutputStream os = s.getOutputStream();
-                    ObjectOutputStream oos = new ObjectOutputStream(os);
-                    oos.writeObject(message);
-                    removePerson(s, ph);
-                    System.out.println(message);
-                    oos.close();
-                    os.close();
-                }else if(message.equals("addPerson")){
-                    message = "OK";
-                    OutputStream os = s.getOutputStream();
-                    ObjectOutputStream oos = new ObjectOutputStream(os);
-                    oos.writeObject(message);
-                    addUser(s, ph);
-                    System.out.println(message);
-                    oos.close();
-                    os.close();
-                }else if(message.equals("addDevice")){
-                    message = "OK";
-                    OutputStream os = s.getOutputStream();
-                    ObjectOutputStream oos = new ObjectOutputStream(os);
-                    oos.writeObject(message);
-                    addDevice(s, dh);
-                    System.out.println(message);
-                    oos.close();
-                    os.close();
-                }else if(message.equals("removeDevice")){
-                    message = "OK";
-                    OutputStream os = s.getOutputStream();
-                    ObjectOutputStream oos = new ObjectOutputStream(os);
-                    oos.writeObject(message);
-                    removeDevice(s, dh);
-                    System.out.println(message);
-                    oos.close();
-                    os.close();
-                }else if(message.equals("getDevice")){
-                    message = "OK";
-                    OutputStream os = s.getOutputStream();
-                    ObjectOutputStream oos = new ObjectOutputStream(os);
-                    oos.writeObject(message);
-                    getDevice(s, dh);
-                    System.out.println(message);
-                    oos.close();
-                    os.close();
+    public void run() {
+        try {
+            String action, message;
+            final ObjectInputStream input = new ObjectInputStream(socket.getInputStream());
+            final ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream());
+
+            message = action = (String) input.readObject();
+            System.out.println(message);
+
+            if (isValidAction(action)) {
+                message = "OK";
+                output.writeObject(message);
+
+                switch (action) {
+                    case "login":
+                        Login(socket, ph);
+                        break;
+                    case "deleteUser":
+                        removePerson(socket, ph);
+                        break;
+                    case "addPerson":
+                        addUser(socket, ph);
+                        break;
+                    case "addDevice":
+                        addDevice(socket, dh);
+                        break;
+                    case "removeDevice":
+                        removeDevice(socket, dh);
+                        break;
+                    case "getDevice":
+                        getDevice(socket, dh);
+                        break;
+                    case "updateDevice":
+                        updateDevice(socket, dh);
+                        break;
                 }
-                ois.close();
-                is.close();
-                s.close();
-                
-                
-            }catch(Exception e){
-                System.err.println("Error: " + e.getMessage());
-                e.printStackTrace(System.err);
+                System.out.println(message);
+            }
+            output.close();
+            input.close();
+            socket.close();
+        } catch (Exception e) {
+            System.err.println("Error: " + e.getMessage());
+            e.printStackTrace(System.err);
+        }
+    }
+    
+    private boolean isValidAction(String action) {
+        final String[] validActions = {
+            "login", 
+            "deleteUser", 
+            "addPerson", 
+            "addDevice", 
+            "removeDevice", 
+            "getDevice", 
+            "updateDevice"
+        };
+        boolean isValid = false;
+        for (String validAction : validActions) {
+            if (action.equals(validAction)) {
+                isValid = true;
+                break;
             }
         }
+        return isValid;
+    }
     
     private synchronized void Login(Socket s, PersonHandler ph){
         try{
@@ -281,4 +275,35 @@ public class ServerThread extends Thread{
             e.printStackTrace(System.err);
         }
     }
+
+  private synchronized void updateDevice(Socket s, DeviceHandler dh){
+        try{
+            InputStream is = s.getInputStream();
+            ObjectInputStream ois = new ObjectInputStream(is);
+            Device c = (Device)ois.readObject();
+            
+            if(dh.updateDevice(c) == true){
+                String message = "1";
+                OutputStream os = s.getOutputStream();
+                ObjectOutputStream oos = new ObjectOutputStream(os);
+                oos.writeObject(message);
+                os.close();
+                dh.SerializeDevice();
+            }else{
+                String message = "-1";
+                OutputStream os = s.getOutputStream();
+                ObjectOutputStream oos = new ObjectOutputStream(os);
+                oos.writeObject(message);
+                os.close();
+                
+            }
+        }catch(Exception e){
+            System.err.println("Error: " + e.getMessage());
+            e.printStackTrace(System.err);
+        }
+    }
+
+
+
+
 }
