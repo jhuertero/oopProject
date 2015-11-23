@@ -95,48 +95,46 @@ public class ServerThread extends Thread{
         return isValid;
     }
     
-    private synchronized void Login(Socket s, PersonHandler ph){
-        try{
-            InputStream is = s.getInputStream();
-            ObjectInputStream ois = new ObjectInputStream(is);
-            User p = (User)ois.readObject();            
-            if(p != null){
-                try{
-                    User u1;
-                    u1 = (User)(ph.getPerson(p.getID()));
-                    if(u1.getPassword().equals(p.getPassword()) == true){
-                        String message;
-                                    
-                        if(u1.getUserType() == User.UserType.SUPERUSER)
-                            message = "1";
-                        else
-                            message = "2";
-
-                        OutputStream os = s.getOutputStream();
-                        ObjectOutputStream oos = new ObjectOutputStream(os);
-                        oos.writeObject(message);
-                        os.close();
-                    }else{
-                        String message = "-1";
-                        OutputStream os = s.getOutputStream();
-                        ObjectOutputStream oos = new ObjectOutputStream(os);
-                        oos.writeObject(message);
-                        os.close();
+    private synchronized void Login(Socket socket, PersonHandler personHandler) {
+        String response = "-1"; // default response to "error"
+        try {
+            ObjectInputStream input = new ObjectInputStream(socket.getInputStream());
+            ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream());
+            try {
+                User loginUser = (User) input.readObject();
+                if (loginUser != null) {
+                    try {
+                        User existingUser = (User) personHandler.getPerson(loginUser.getID());
+                        if (existingUser != null) {
+                            if (existingUser.getPassword().equals(loginUser.getPassword())) {
+                                // password matches; check UserType
+                                if (existingUser.getUserType() == User.UserType.SUPERUSER) {
+                                    response = "1";
+                                } else {
+                                    response = "2";
+                                }
+                            } // otherwise the user password does not match
+                        } // otherwise the user is an invalid user
+                    } catch (NullPointerException npe) {
+                        System.err.println("Error: " + e.getMessage());
+                        e.printStackTrace(System.err);
                     }
-                }catch (NullPointerException npe){
-                    String message = "-1";
-                    OutputStream os = s.getOutputStream();
-                    ObjectOutputStream oos = new ObjectOutputStream(os);
-                    oos.writeObject(message);
-                    os.close();
                 }
+            } catch (Exception e) {
+                System.err.println("Error: " + e.getMessage());
+                e.printStackTrace(System.err);
+
+            } finally {
+                output.writeObject(response);
+                input.close();
+                output.close();
             }
-        }catch(Exception e){
+        } catch (Exception e) {
             //TO-DO might need to add the -1 section here
             System.err.println("Error: " + e.getMessage());
             e.printStackTrace(System.err);
         }
-    }
+    }    
     
     private synchronized void removePerson(Socket s, PersonHandler ph){
         try{
@@ -276,7 +274,7 @@ public class ServerThread extends Thread{
         }
     }
 
-  private synchronized void updateDevice(Socket s, DeviceHandler dh){
+    private synchronized void updateDevice(Socket s, DeviceHandler dh){
         try{
             InputStream is = s.getInputStream();
             ObjectInputStream ois = new ObjectInputStream(is);
@@ -302,8 +300,4 @@ public class ServerThread extends Thread{
             e.printStackTrace(System.err);
         }
     }
-
-
-
-
 }
