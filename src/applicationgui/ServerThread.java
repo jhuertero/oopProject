@@ -83,7 +83,7 @@ public class ServerThread extends Thread{
             "addDevice", 
             "removeDevice", 
             "getDevice", 
-            "udpateDevice"
+            "updateDevice"
         };
         boolean isValid = false;
         for (String validAction : validActions) {
