@@ -115,7 +115,7 @@ public class ServerThread extends Thread{
                                 }
                             } // otherwise the user password does not match
                         } // otherwise the user is an invalid user
-                    } catch (NullPointerException npe) {
+                    } catch (NullPointerException e) {
                         System.err.println("Error: " + e.getMessage());
                         e.printStackTrace(System.err);
                     }
@@ -136,33 +136,33 @@ public class ServerThread extends Thread{
         }
     }    
     
-    private synchronized void removePerson(Socket s, PersonHandler ph){
-        try{
-            InputStream is = s.getInputStream();
-            ObjectInputStream ois = new ObjectInputStream(is);
-            String id = (String)ois.readObject();
-            Person d = ph.getPerson(id);
-            if(ph.deletePerson(d.getID()) == true){
-                String message = "1";
-                OutputStream os = s.getOutputStream();
-                ObjectOutputStream oos = new ObjectOutputStream(os);
-                oos.writeObject(message);
-                os.close();
-                dh.SerializeDevice();
-            }else{
-                String message = "-1";
-                OutputStream os = s.getOutputStream();
-                ObjectOutputStream oos = new ObjectOutputStream(os);
-                oos.writeObject(message);
-                os.close();
-                
+    private synchronized void removePerson(Socket socket, PersonHandler personHandler) {
+        String response = "-1"; // default response to "error"
+        try {
+            ObjectInputStream input = new ObjectInputStream(socket.getInputStream());
+            ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream());
+            try {
+                String id = (String) input.readObject();
+                Person person = personHandler.getPerson(id);
+                if (personHandler.deletePerson(person.getID())) {
+                    // the person was successfully deleted (from in-memory list)
+                    response = "1";
+                    personHandler.SerializePerson(); // commit change
+                } // otherwise the person was not deleted
+            } catch (Exception e) {
+                System.err.println("Error: " + e.getMessage());
+                e.printStackTrace(System.err);
+            } finally {
+                output.writeObject(response);
+                input.close();
+                output.close();
             }
-        }catch(Exception e){
+        } catch (Exception e) {
             System.err.println("Error: " + e.getMessage());
             e.printStackTrace(System.err);
         }
     }
-    
+
     private synchronized void addUser(Socket s, PersonHandler ph){
         try{
             InputStream is = s.getInputStream();
