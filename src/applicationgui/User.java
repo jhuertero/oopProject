@@ -10,7 +10,7 @@ package applicationgui;
  *
  * @author Jose
  */
-public class User extends Person{
+public class User extends Patron {
     static public enum UserType{SUPERUSER, USER};
     private String password;
     private UserType type;
