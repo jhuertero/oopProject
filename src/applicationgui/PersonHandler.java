@@ -33,14 +33,14 @@ public class PersonHandler {
     }
     
     public Person getPerson(String id){
-        Person p;
+        Person p = null;
         for(int i = 0; i < persons.size(); i++){
             if(persons.get(i).getID().equals(id)){
                 p = persons.get(i);
                 return p;
             }
         }
-        p = new Person();
+        //p = new Person();
         return p;
     }
     

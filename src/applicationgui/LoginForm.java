@@ -7,6 +7,7 @@ package applicationgui;
 import javax.swing.JOptionPane;
 import java.io.*;
 import java.net.*;
+
 /**
  *
  * @author jose
@@ -34,7 +35,7 @@ public class LoginForm extends javax.swing.JFrame {
         uNameBox = new javax.swing.JTextField();
         passBox = new javax.swing.JPasswordField();
         jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        btnLogin = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Login");
@@ -46,16 +47,26 @@ public class LoginForm extends javax.swing.JFrame {
         jLabel2.setText("Password:");
 
         uNameBox.setName(""); // NOI18N
+        uNameBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                uNameBoxActionPerformed(evt);
+            }
+        });
 
         passBox.setToolTipText("");
+        passBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                passBoxActionPerformed(evt);
+            }
+        });
 
         jButton1.setFont(new java.awt.Font("Dialog", 1, 10)); // NOI18N
         jButton1.setText("Forgot Password?");
 
-        jButton2.setText("Login");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        btnLogin.setText("Login");
+        btnLogin.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                btnLoginActionPerformed(evt);
             }
         });
 
@@ -78,7 +89,7 @@ public class LoginForm extends javax.swing.JFrame {
                         .addContainerGap()
                         .addComponent(jButton1)
                         .addGap(18, 18, 18)
-                        .addComponent(jButton2)))
+                        .addComponent(btnLogin)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -95,47 +106,55 @@ public class LoginForm extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton1)
-                    .addComponent(jButton2))
+                    .addComponent(btnLogin))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        User u;
-        char[] input = passBox.getPassword();
-        String pString = new String(input);
-        u = new User();
-        u.setID(uNameBox.getText());
-        u.setPassword(pString);
-        
-        try{
-            Socket s = new Socket("localHost", 8765);
-            String message = "login";
-            OutputStream os = s.getOutputStream();
-            ObjectOutputStream oos = new ObjectOutputStream(os);
-            oos.writeObject(message);
-            
-            InputStream is = s.getInputStream();
-            ObjectInputStream ois = new ObjectInputStream(is);
-            message = (String)ois.readObject();
-            System.out.println(message);
-            if(message.equals("OK")){
-                DoLogin(s, u);
-            }else{
+    private void btnLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLoginActionPerformed
+        User user = new User();
+        String password = new String(passBox.getPassword());
+
+        user.setID(uNameBox.getText());
+        user.setPassword(password);
+
+        try {
+            // setup socket connection and object I/O streams
+            Socket socket = new Socket("localHost", 8765);
+            ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream());
+            ObjectInputStream input = new ObjectInputStream(socket.getInputStream());
+            // setup server action (or command) and server response
+            String action = "login";
+            String response;
+
+            output.writeObject(action);
+            response = (String) input.readObject();
+
+            System.out.println(response);
+
+            if (response.equals("OK")) {
+                DoLogin(socket, user);
+            } else {
                 JOptionPane.showMessageDialog(errorPane, "Server Error");
             }
-            ois.close();
-            is.close();
-            os.close();
-            s.close();
-            
-        }catch(Exception e){
+            input.close();
+            output.close();
+            socket.close();
+        } catch (Exception e) {
             System.err.println("Error: " + e.getMessage());
             e.printStackTrace(System.err);
         }
-    }//GEN-LAST:event_jButton2ActionPerformed
+    }//GEN-LAST:event_btnLoginActionPerformed
+
+    private void passBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_passBoxActionPerformed
+        btnLogin.doClick(); // Invoke the Login button's click event
+    }//GEN-LAST:event_passBoxActionPerformed
+
+    private void uNameBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_uNameBoxActionPerformed
+        passBox.grabFocus(); // Move cursor to the password box
+    }//GEN-LAST:event_uNameBoxActionPerformed
 
     /**
      * @param args the command line arguments
@@ -171,46 +190,47 @@ public class LoginForm extends javax.swing.JFrame {
             }
         });
     }
-    private void DoLogin(Socket s, User u){
-        try{
-                OutputStream os = s.getOutputStream();
-                ObjectOutputStream oos = new ObjectOutputStream(os);
-                oos.writeObject(u);
-                
-                InputStream is = s.getInputStream();
-                ObjectInputStream ois = new ObjectInputStream(is);
-                String message = (String)ois.readObject();
-                
-                if(message.equals("1") == true){
-                    this.setVisible(false);
-                    uNameBox.setText("");
-                    passBox.setText("");
-                    AdminForm f = new AdminForm(this);
-                    f.setLocationRelativeTo(null);
-                    f.setVisible(true);
-                }else if(message.equals("2") == true){
-                    this.setVisible(false);
-                    uNameBox.setText("");
-                    passBox.setText("");
-                    TransactionForm f = new TransactionForm(this);
-                    f.setLocationRelativeTo(null);
-                    f.setVisible(true);
+    
+    private void DoLogin(Socket socket, User user) {
+        try {
+            // setup object I/O streams and server response
+            ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream());            
+            output.writeObject(user);
+            ObjectInputStream input = new ObjectInputStream(socket.getInputStream());
+            String response = (String) input.readObject();
+
+            if ((response.equals("1")) || response.equals("2")) {
+                // hide the login form and clear the username and password textboxes
+                this.setVisible(false);
+                uNameBox.setText("");
+                passBox.setText("");
+
+                javax.swing.JFrame form = null;
+                if (response.equals("1")) {
+                    // UserType is SUPERUSER
+                    form = new AdminForm(this);
+                } else if (response.equals("2")) {
+                    // UserType is USER (or non-SUPERUSER)
+                    form = new TransactionForm(this);
                 }
-                else{
-                    JOptionPane.showMessageDialog(errorPane, "Username or password incorrect");
-                }                
-                
-                is.close();
-                oos.close();
-                os.close();
-        }catch(Exception e){
-            
+                form.setLocationRelativeTo(null);
+                form.setVisible(true); // Open instanciated form
+            } else {
+                JOptionPane.showMessageDialog(errorPane, "Username or password is incorrect");
+            }
+
+            output.close();
+            input.close();
+        } catch (Exception e) {
+            System.err.println("Error: " + e.getMessage());
+            e.printStackTrace(System.err);
         }
     }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnLogin;
     private javax.swing.JOptionPane errorPane;
     private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPasswordField passBox;
