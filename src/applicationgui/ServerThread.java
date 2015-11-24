@@ -63,6 +63,9 @@ public class ServerThread extends Thread{
                     case "updateDevice":
                         updateDevice(socket, dh);
                         break;
+                    case "updatePerson":
+                        updatePerson(socket, ph);
+                        break;
                 }
                 System.out.println(message);
             }
@@ -83,7 +86,8 @@ public class ServerThread extends Thread{
             "addDevice", 
             "removeDevice", 
             "getDevice", 
-            "updateDevice"
+            "updateDevice",
+            "updatePerson"
         };
         boolean isValid = false;
         for (String validAction : validActions) {
@@ -300,4 +304,36 @@ public class ServerThread extends Thread{
             e.printStackTrace(System.err);
         }
     }
+    
+    
+    
+    private synchronized void updatePerson(Socket s, PersonHandler ph){
+        try{
+            InputStream is = s.getInputStream();
+            ObjectInputStream ois = new ObjectInputStream(is);
+            String patron_id = (String)ois.readObject();
+            String device_id = (String)ois.readObject();
+            
+            
+            if(ph.updatePerson(patron_id, device_id) == true){
+                String message = "1";
+                OutputStream os = s.getOutputStream();
+                ObjectOutputStream oos = new ObjectOutputStream(os);
+                oos.writeObject(message);
+                os.close();
+                ph.SerializePerson();
+            }else{
+                String message = "-1";
+                OutputStream os = s.getOutputStream();
+                ObjectOutputStream oos = new ObjectOutputStream(os);
+                oos.writeObject(message);
+                os.close();
+                
+            }
+        }catch(Exception e){
+            System.err.println("Error: " + e.getMessage());
+            e.printStackTrace(System.err);
+        }
+    }
+    
 }
