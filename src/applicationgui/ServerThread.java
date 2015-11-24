@@ -87,7 +87,8 @@ public class ServerThread extends Thread{
             "addDevice", 
             "removeDevice", 
             "getDevice", 
-            "updateDevice"
+            "updateDevice",
+            "forgetPassword"
         };
         boolean isValid = false;
         for (String validAction : validActions) {
