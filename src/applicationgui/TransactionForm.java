@@ -5,6 +5,12 @@
  */
 package applicationgui;
 
+import java.awt.Component;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
+import javax.swing.JOptionPane;
+
 
 /**
  *
@@ -16,6 +22,8 @@ public class TransactionForm extends javax.swing.JFrame {
      * Creates new form TransactionForm
      */
     javax.swing.JFrame preForm;
+    private Component errorPane;
+    private Component messagePane;
     public TransactionForm() {
         initComponents();
     }
@@ -59,6 +67,11 @@ public class TransactionForm extends javax.swing.JFrame {
         checkInButton.setText("Check In");
 
         checkOutButton.setText("Check Out");
+        checkOutButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                checkOutButtonActionPerformed(evt);
+            }
+        });
 
         jLabel3.setText("<html>If checking in<br>only  Barcode <br>is needed.");
 
@@ -111,6 +124,40 @@ public class TransactionForm extends javax.swing.JFrame {
         preForm.setVisible(true);
     }//GEN-LAST:event_formWindowClosed
 
+    private void checkOutButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_checkOutButtonActionPerformed
+
+        
+        String patron_id = jTextField2.getText();
+        String device_id =jTextField1.getText();
+        
+         try {
+            // setup socket connection and object I/O streams
+            Socket socket = new Socket("localHost", 8765);
+            ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream());
+            ObjectInputStream input = new ObjectInputStream(socket.getInputStream());
+            // setup server action (or command) and server response
+            String action = "updatePerson";
+
+            String response;
+
+            output.writeObject(action);
+            response = (String)input.readObject();
+
+            System.out.println(response);
+            if (response.equals("OK")) {
+               updatePerson(socket,patron_id, device_id);
+            } else {
+                JOptionPane.showMessageDialog(errorPane, "Server Error");
+            }
+            input.close();
+            output.close();
+            socket.close();
+        } catch (Exception e) {
+            System.err.println("Error: " + e.getMessage());
+            e.printStackTrace(System.err);
+        }  
+    }//GEN-LAST:event_checkOutButtonActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -146,7 +193,30 @@ public class TransactionForm extends javax.swing.JFrame {
         });
     }
 
-    //TO-DO add a transaction method
+    private void updatePerson(Socket socket, String user_id, String device_id) {
+        try {
+            // setup object I/O streams and server response
+            ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream());            
+            output.writeObject(user_id);
+            output.writeObject(device_id);
+            
+            ObjectInputStream input = new ObjectInputStream(socket.getInputStream());
+            String response = (String) input.readObject();
+
+            if (response.equals("1")) {
+                 JOptionPane.showMessageDialog(messagePane, "Device checkout- successful !");
+            
+            } else {
+                JOptionPane.showMessageDialog(errorPane, "Device cannot be checkedout ");
+            }
+
+            output.close();
+            input.close();
+        } catch (Exception e) {
+            System.err.println("Error: " + e.getMessage());
+            e.printStackTrace(System.err);
+        }
+    }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton checkInButton;
