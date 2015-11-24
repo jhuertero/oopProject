@@ -61,4 +61,9 @@ public class Person implements java.io.Serializable{
     public String toString(){
         return id + " " + firstName + " " + lastName + " " + email;
     }
+    
+    public void updatePerson(String device_id){
+        
+        // no need to implement here, overriden by patron
+    }
 }
