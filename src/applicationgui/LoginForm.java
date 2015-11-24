@@ -62,6 +62,11 @@ public class LoginForm extends javax.swing.JFrame {
 
         jButton1.setFont(new java.awt.Font("Dialog", 1, 10)); // NOI18N
         jButton1.setText("Forgot Password?");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         btnLogin.setText("Login");
         btnLogin.addActionListener(new java.awt.event.ActionListener() {
@@ -155,6 +160,18 @@ public class LoginForm extends javax.swing.JFrame {
     private void uNameBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_uNameBoxActionPerformed
         passBox.grabFocus(); // Move cursor to the password box
     }//GEN-LAST:event_uNameBoxActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+       this.setVisible(false);
+       uNameBox.setText("");
+       passBox.setText("");
+       
+        ForgetPassword form = new ForgetPassword(this);
+        form.setLocationRelativeTo(null);
+        form.setVisible(true);
+      
+     
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
      * @param args the command line arguments
