@@ -63,6 +63,10 @@ public class ServerThread extends Thread{
                     case "updateDevice":
                         updateDevice(socket, dh);
                         break;
+                    case "forgetPassword":
+                        getPassword(socket, ph);
+                        break;
+                        
                 }
                 System.out.println(message);
             }
@@ -300,4 +304,28 @@ public class ServerThread extends Thread{
             e.printStackTrace(System.err);
         }
     }
+    
+    
+    
+     private synchronized void getPassword(Socket s, PersonHandler ph){
+         
+         String password="";
+        try{
+            InputStream is = s.getInputStream();
+            ObjectInputStream ois = new ObjectInputStream(is);
+            String user_id = (String)ois.readObject();
+            
+            password = ph.getPassword(user_id);
+            
+            OutputStream os = s.getOutputStream();
+            ObjectOutputStream oos = new ObjectOutputStream(os);
+                oos.writeObject(password);
+            
+                
+        }catch(Exception e){
+            System.err.println("Error: " + e.getMessage());
+            e.printStackTrace(System.err);
+        }
+    }
+    
 }
