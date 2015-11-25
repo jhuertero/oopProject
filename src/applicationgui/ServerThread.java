@@ -70,7 +70,7 @@ public class ServerThread extends Thread{
                         checkinDevice(socket);
                         break;
                     case "forgetPassword":
-                        getPassword(socket, ph);
+                        getPassword(socket);
                         break;
                         
                 }
@@ -393,14 +393,18 @@ public class ServerThread extends Thread{
                 
             }
         }catch(Exception e){
-    private synchronized void getPassword(Socket s, PersonHandler personHandler){
+            
+        }
+    }
+      
+    private synchronized void getPassword(Socket s){
         String response = "-1"; // default response to "error"
         try {
             ObjectInputStream input = new ObjectInputStream(socket.getInputStream());
             ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream());
             try {
                 String id = (String)input.readObject();
-                User passUser = (User)personHandler.getPerson(id);
+                User passUser = (User)ph.getPerson(id);
                 if (passUser != null) {
                     response = passUser.getPassword();
                     System.out.println(response);
