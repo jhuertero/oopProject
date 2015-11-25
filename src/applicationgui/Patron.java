@@ -29,35 +29,24 @@ public class Patron extends Person {
     }
     
     
-    public boolean addDevice (String device_id){ 
-    for (String dv: devices) {
-        if (dv.equals(device_id)) {
-            return false;
-        }
-    }
-    devices.add(device_id);
-    return true;      
-  }
-      
-     public boolean deleteDevice(String device_id){
-    for (String dv: devices) {
-        if (dv.equals(device_id)) {
-            return false;
-        }
-    }
-    devices.remove(device_id);
-    return true;      
-  }
-    
      
-      public void updatePerson(String device_id){
+      public void checkoutDevice(String device_id){
           
-       if(addDevice(device_id)) 
-       {System.out.println("Device checkedout completed");}
-       else
-       {System.out.println("Device checkedout cannot be completed");}
+        for (String dv: devices) {
+        if (dv.equals(device_id)) {
+         System.out.println("Device is already checkedout to this user !");
+         }else{
+           devices.add(device_id);
+           }}}
       
-       
-    }
-     
+      public void checkinDevice(String device_id){
+          
+        for (String dv: devices) {
+        if (dv.equals(device_id)) {
+             devices.remove(device_id);
+         }else{
+           System.out.println("Device cannot be checkedin !");
+           }}}
 }
+     
+
