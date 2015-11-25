@@ -61,11 +61,4 @@ public class Person implements java.io.Serializable{
     public String toString(){
         return id + " " + firstName + " " + lastName + " " + email;
     }
-    
-    public void checkoutDevice(String device_id){
-        
-    }
-      public void checkinDevice(String device_id){
-        
-    }
 }

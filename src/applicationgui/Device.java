@@ -25,7 +25,7 @@ public class Device implements java.io.Serializable{
     private String serialNumber;
     private String condition;
     private deviceType type;
-
+    private String checkedOutTo;
     public Device() {
     }
     
@@ -35,6 +35,7 @@ public class Device implements java.io.Serializable{
         this.serialNumber = serialNumber;
         this.condition = condition;
         this.type = type;
+        this.checkedOutTo = null;
     }
 
     public void setId(String id) {
@@ -56,6 +57,10 @@ public class Device implements java.io.Serializable{
     public void setType(deviceType type) {
         this.type = type;
     }
+    
+    public void setCheckedOutTo(String checkedOutTo){
+        this.checkedOutTo = checkedOutTo;
+    }
 
     public String getId() {
         return id;
@@ -76,8 +81,11 @@ public class Device implements java.io.Serializable{
     public deviceType getType() {
         return type;
     }
+    public String getCheckedOutTo(){
+        return checkedOutTo;
+    }
     
     public String toString(){
-        return id + " " + deviceName + " " + serialNumber + " " + condition + " " + type;
+        return id + " " + deviceName + " " + serialNumber + " " + condition + " " + type + " " + checkedOutTo;
     }
 }

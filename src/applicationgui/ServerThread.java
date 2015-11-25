@@ -43,31 +43,31 @@ public class ServerThread extends Thread{
 
                 switch (action) {
                     case "login":
-                        Login(socket, ph);
+                        Login(socket);
                         break;
                     case "deleteUser":
-                        removePerson(socket, ph);
+                        removePerson(socket);
                         break;
                     case "addPerson":
-                        addUser(socket, ph);
+                        addUser(socket);
                         break;
                     case "addDevice":
-                        addDevice(socket, dh);
+                        addDevice(socket);
                         break;
                     case "removeDevice":
-                        removeDevice(socket, dh);
+                        removeDevice(socket);
                         break;
                     case "getDevice":
-                        getDevice(socket, dh);
+                        getDevice(socket);
                         break;
                     case "updateDevice":
-                        updateDevice(socket, dh);
+                        updateDevice(socket);
                         break;
                     case "checkoutDevice":
-                        checkoutDevice(socket, ph);
+                        checkoutDevice(socket);
                         break;
                     case "checkinDevice":
-                        checkoutDevice(socket, ph);
+                        checkinDevice(socket);
                         break;
                 }
                 System.out.println(message);
@@ -103,7 +103,7 @@ public class ServerThread extends Thread{
         return isValid;
     }
     
-    private synchronized void Login(Socket socket, PersonHandler personHandler) {
+    private synchronized void Login(Socket socket) {
         String response = "-1"; // default response to "error"
         try {
             ObjectInputStream input = new ObjectInputStream(socket.getInputStream());
@@ -112,7 +112,7 @@ public class ServerThread extends Thread{
                 User loginUser = (User) input.readObject();
                 if (loginUser != null) {
                     try {
-                        User existingUser = (User) personHandler.getPerson(loginUser.getID());
+                        User existingUser = (User) ph.getPerson(loginUser.getID());
                         if (existingUser != null) {
                             if (existingUser.getPassword().equals(loginUser.getPassword())) {
                                 // password matches; check UserType
@@ -144,18 +144,18 @@ public class ServerThread extends Thread{
         }
     }    
     
-    private synchronized void removePerson(Socket socket, PersonHandler personHandler) {
+    private synchronized void removePerson(Socket socket) {
         String response = "-1"; // default response to "error"
         try {
             ObjectInputStream input = new ObjectInputStream(socket.getInputStream());
             ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream());
             try {
                 String id = (String) input.readObject();
-                Person person = personHandler.getPerson(id);
-                if (personHandler.deletePerson(person.getID())) {
+                Person person = ph.getPerson(id);
+                if (ph.deletePerson(person.getID())) {
                     // the person was successfully deleted (from in-memory list)
                     response = "1";
-                    personHandler.SerializePerson(); // commit change
+                    ph.SerializePerson(); // commit change
                 } // otherwise the person was not deleted
             } catch (Exception e) {
                 System.err.println("Error: " + e.getMessage());
@@ -171,7 +171,7 @@ public class ServerThread extends Thread{
         }
     }
 
-    private synchronized void addUser(Socket s, PersonHandler ph){
+    private synchronized void addUser(Socket s){
         try{
             InputStream is = s.getInputStream();
             ObjectInputStream ois = new ObjectInputStream(is);
@@ -197,7 +197,7 @@ public class ServerThread extends Thread{
         }
     }
     
-    private synchronized void addDevice(Socket s, DeviceHandler dh){
+    private synchronized void addDevice(Socket s){
         try{
             InputStream is = s.getInputStream();
             ObjectInputStream ois = new ObjectInputStream(is);
@@ -224,7 +224,7 @@ public class ServerThread extends Thread{
         }
     }
     
-    private synchronized void removeDevice(Socket s, DeviceHandler dh){
+    private synchronized void removeDevice(Socket s){
         try{
             InputStream is = s.getInputStream();
             ObjectInputStream ois = new ObjectInputStream(is);
@@ -251,7 +251,7 @@ public class ServerThread extends Thread{
         }
     }
     
-    private synchronized void getDevice(Socket s, DeviceHandler dh){
+    private synchronized void getDevice(Socket s){
         try{
             InputStream is = s.getInputStream();
             ObjectInputStream ois = new ObjectInputStream(is);
@@ -282,7 +282,7 @@ public class ServerThread extends Thread{
         }
     }
 
-    private synchronized void updateDevice(Socket s, DeviceHandler dh){
+    private synchronized void updateDevice(Socket s){
         try{
             InputStream is = s.getInputStream();
             ObjectInputStream ois = new ObjectInputStream(is);
@@ -311,21 +311,34 @@ public class ServerThread extends Thread{
     
     
     
-    private synchronized void checkoutDevice(Socket s, PersonHandler ph){
+    private synchronized void checkoutDevice(Socket s){
         try{
             InputStream is = s.getInputStream();
             ObjectInputStream ois = new ObjectInputStream(is);
             String patron_id = (String)ois.readObject();
             String device_id = (String)ois.readObject();
             
+            Patron p = (Patron)ph.getPerson(patron_id);
+            Device d = dh.getDevice(device_id);
             
-            if(ph.checkoutDevice(patron_id, device_id) == true){
-                String message = "1";
-                OutputStream os = s.getOutputStream();
-                ObjectOutputStream oos = new ObjectOutputStream(os);
-                oos.writeObject(message);
-                os.close();
-                ph.SerializePerson();
+            if(p != null && d != null){
+                if(dh.isCheckedOut(d) == false){
+                    p.checkoutDevice(d.getId());
+                    d.setCheckedOutTo(p.getID());
+                    String message = "1";
+                    OutputStream os = s.getOutputStream();
+                    ObjectOutputStream oos = new ObjectOutputStream(os);
+                    oos.writeObject(message);
+                    os.close();
+                    ph.SerializePerson();
+                    dh.SerializeDevice();
+                }else{
+                    String message = "2";
+                    OutputStream os = s.getOutputStream();
+                    ObjectOutputStream oos = new ObjectOutputStream(os);
+                    oos.writeObject(message);
+                    os.close();
+                }
             }else{
                 String message = "-1";
                 OutputStream os = s.getOutputStream();
@@ -340,21 +353,33 @@ public class ServerThread extends Thread{
         }
     }
     
-      private synchronized void checkinDevice(Socket s, PersonHandler ph){
+      private synchronized void checkinDevice(Socket s){
         try{
             InputStream is = s.getInputStream();
             ObjectInputStream ois = new ObjectInputStream(is);
-            String patron_id = (String)ois.readObject();
             String device_id = (String)ois.readObject();
+            Device d = dh.getDevice(device_id);
             
-            
-            if(ph.checkinDevice(patron_id, device_id) == true){
-                String message = "1";
-                OutputStream os = s.getOutputStream();
-                ObjectOutputStream oos = new ObjectOutputStream(os);
-                oos.writeObject(message);
-                os.close();
-                ph.SerializePerson();
+            if(d != null){
+                if(dh.isCheckedOut(d) == true){
+                    Patron p = (Patron)ph.getPerson(d.getCheckedOutTo());
+                    p.checkinDevice(d.getId());
+                    d.setCheckedOutTo(null);
+                    String message = "1";
+                    OutputStream os = s.getOutputStream();
+                    ObjectOutputStream oos = new ObjectOutputStream(os);
+                    oos.writeObject(message);
+                    os.close();
+                    ph.SerializePerson();
+                    dh.SerializeDevice();
+                }else{
+                    String message = "2";
+                    OutputStream os = s.getOutputStream();
+                    ObjectOutputStream oos = new ObjectOutputStream(os);
+                    oos.writeObject(message);
+                    os.close();
+                    ph.SerializePerson();
+                }
             }else{
                 String message = "-1";
                 OutputStream os = s.getOutputStream();

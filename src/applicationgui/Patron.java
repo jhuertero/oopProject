@@ -25,19 +25,20 @@ public class Patron extends Person {
     
     @Override
     public String toString() {
-        return super.toString();
+        return devices.size() + " " + super.toString();
     }
     
     
      
-      public void checkoutDevice(String device_id){
-          
+    public void checkoutDevice(String device_id){
         for (String dv: devices) {
-        if (dv.equals(device_id)) {
-         System.out.println("Device is already checkedout to this user !");
-         }else{
-           devices.add(device_id);
-           }}}
+            if (dv.equals(device_id)) {
+                System.out.println("Device is already checkedout to this user !");
+            }else{
+                devices.add(device_id);
+            }
+        }
+    }
       
       public void checkinDevice(String device_id){
           

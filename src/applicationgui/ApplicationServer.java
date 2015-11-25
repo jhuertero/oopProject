@@ -103,7 +103,8 @@ public class ApplicationServer {
         }*/
         DeviceHandler dh = new DeviceHandler();
         PersonHandler ph = new PersonHandler();
-        
+        ph.addPerson(new User("20576", "Jose", "Huertero", "huerteroj14@gator.uhd.edu", "123456", User.UserType.SUPERUSER));
+        ph.SerializePerson();
         ph.DeserializePersonList();
         dh.DeserializeDeviceList();
         try{

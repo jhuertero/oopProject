@@ -245,8 +245,10 @@ public class TransactionForm extends javax.swing.JFrame {
             if (response.equals("1")) {
                  JOptionPane.showMessageDialog(messagePane, "Device checkout- successful !");
             
-            } else {
-                JOptionPane.showMessageDialog(errorPane, "Device cannot be checkedout ");
+            } else if(response.equals("2")){
+                JOptionPane.showMessageDialog(errorPane, "Device already checked out");
+            }else{
+                JOptionPane.showMessageDialog(errorPane, "Invalid Patron or Device ID");
             }
 
             output.close();
@@ -261,17 +263,18 @@ public class TransactionForm extends javax.swing.JFrame {
         try {
             // setup object I/O streams and server response
             ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream());            
-            output.writeObject(user_id);
             output.writeObject(device_id);
             
             ObjectInputStream input = new ObjectInputStream(socket.getInputStream());
             String response = (String) input.readObject();
 
             if (response.equals("1")) {
-                 JOptionPane.showMessageDialog(messagePane, "Device checkin- successful !");
+                 JOptionPane.showMessageDialog(messagePane, "Device check-in successful !");
             
-            } else {
-                JOptionPane.showMessageDialog(errorPane, "Device cannot be checkedin ");
+            }else if(response.equals("2")){
+                JOptionPane.showMessageDialog(messagePane, "Device is not Checked-out !");
+            }else {
+                JOptionPane.showMessageDialog(errorPane, "Incorrected Device ID");
             }
 
             output.close();
