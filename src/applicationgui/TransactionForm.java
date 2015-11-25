@@ -272,7 +272,7 @@ public class TransactionForm extends javax.swing.JFrame {
                  JOptionPane.showMessageDialog(messagePane, "Device check-in successful !");
             
             }else if(response.equals("2")){
-                JOptionPane.showMessageDialog(messagePane, "Device is not Checked-out !");
+                JOptionPane.showMessageDialog(messagePane, "Device cannot be Checked in !");
             }else {
                 JOptionPane.showMessageDialog(errorPane, "Incorrected Device ID");
             }
