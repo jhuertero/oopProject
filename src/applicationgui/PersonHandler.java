@@ -99,19 +99,5 @@ public class PersonHandler {
         for(Person p : persons )
             System.out.println(p.toString());        
     }
-        
-        public String getPassword(String user_id){
-        String password ="";
-        Person p = null;
-        for(int i = 0; i < persons.size(); i++){
-            if(persons.get(i).getID().equals(user_id)){
-                p = persons.get(i);
-                password = p.getFirstName(); // cannot access user from here..so testing using firstname
-            }
-        }
-           return password;   
-        }
-        
-        
 }
 

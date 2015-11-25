@@ -308,22 +308,29 @@ public class ServerThread extends Thread{
     
     
     
-     private synchronized void getPassword(Socket s, PersonHandler ph){
-         
-         String password="";
-        try{
-            InputStream is = s.getInputStream();
-            ObjectInputStream ois = new ObjectInputStream(is);
-            String user_id = (String)ois.readObject();
-            
-            password = ph.getPassword(user_id);
-            
-            OutputStream os = s.getOutputStream();
-            ObjectOutputStream oos = new ObjectOutputStream(os);
-                oos.writeObject(password);
-            
-                
-        }catch(Exception e){
+    private synchronized void getPassword(Socket s, PersonHandler personHandler){
+        String response = "-1"; // default response to "error"
+        try {
+            ObjectInputStream input = new ObjectInputStream(socket.getInputStream());
+            ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream());
+            try {
+                String id = (String)input.readObject();
+                User passUser = (User)personHandler.getPerson(id);
+                if (passUser != null) {
+                    response = passUser.getPassword();
+                    System.out.println(response);
+                }
+            } catch (Exception e) {
+                System.err.println("Error: " + e.getMessage());
+                e.printStackTrace(System.err);
+
+            } finally {
+                output.writeObject(response);
+                input.close();
+                output.close();
+            }
+        } catch (Exception e) {
+            //TO-DO might need to add the -1 section here
             System.err.println("Error: " + e.getMessage());
             e.printStackTrace(System.err);
         }
