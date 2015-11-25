@@ -65,6 +65,11 @@ public class TransactionForm extends javax.swing.JFrame {
         jLabel2.setText("Item Barcode:");
 
         checkInButton.setText("Check In");
+        checkInButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                checkInButtonActionPerformed(evt);
+            }
+        });
 
         checkOutButton.setText("Check Out");
         checkOutButton.addActionListener(new java.awt.event.ActionListener() {
@@ -136,7 +141,7 @@ public class TransactionForm extends javax.swing.JFrame {
             ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream());
             ObjectInputStream input = new ObjectInputStream(socket.getInputStream());
             // setup server action (or command) and server response
-            String action = "updatePerson";
+            String action = "checkoutDevice";
 
             String response;
 
@@ -145,7 +150,7 @@ public class TransactionForm extends javax.swing.JFrame {
 
             System.out.println(response);
             if (response.equals("OK")) {
-               updatePerson(socket,patron_id, device_id);
+               checkoutDevice(socket,patron_id, device_id);
             } else {
                 JOptionPane.showMessageDialog(errorPane, "Server Error");
             }
@@ -157,6 +162,40 @@ public class TransactionForm extends javax.swing.JFrame {
             e.printStackTrace(System.err);
         }  
     }//GEN-LAST:event_checkOutButtonActionPerformed
+
+    private void checkInButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_checkInButtonActionPerformed
+       
+         String patron_id = jTextField2.getText();
+        String device_id =jTextField1.getText();
+        
+         try {
+            // setup socket connection and object I/O streams
+            Socket socket = new Socket("localHost", 8765);
+            ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream());
+            ObjectInputStream input = new ObjectInputStream(socket.getInputStream());
+            // setup server action (or command) and server response
+            String action = "checkinDevice";
+
+            String response;
+
+            output.writeObject(action);
+            response = (String)input.readObject();
+
+            System.out.println(response);
+            if (response.equals("OK")) {
+               checkinDevice(socket,patron_id, device_id);
+            } else {
+                JOptionPane.showMessageDialog(errorPane, "Server Error");
+            }
+            input.close();
+            output.close();
+            socket.close();
+        } catch (Exception e) {
+            System.err.println("Error: " + e.getMessage());
+            e.printStackTrace(System.err);
+        }              
+        
+    }//GEN-LAST:event_checkInButtonActionPerformed
 
     /**
      * @param args the command line arguments
@@ -193,7 +232,7 @@ public class TransactionForm extends javax.swing.JFrame {
         });
     }
 
-    private void updatePerson(Socket socket, String user_id, String device_id) {
+    private void checkoutDevice(Socket socket, String user_id, String device_id) {
         try {
             // setup object I/O streams and server response
             ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream());            
@@ -208,6 +247,31 @@ public class TransactionForm extends javax.swing.JFrame {
             
             } else {
                 JOptionPane.showMessageDialog(errorPane, "Device cannot be checkedout ");
+            }
+
+            output.close();
+            input.close();
+        } catch (Exception e) {
+            System.err.println("Error: " + e.getMessage());
+            e.printStackTrace(System.err);
+        }
+    }
+    
+    private void checkinDevice(Socket socket, String user_id, String device_id) {
+        try {
+            // setup object I/O streams and server response
+            ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream());            
+            output.writeObject(user_id);
+            output.writeObject(device_id);
+            
+            ObjectInputStream input = new ObjectInputStream(socket.getInputStream());
+            String response = (String) input.readObject();
+
+            if (response.equals("1")) {
+                 JOptionPane.showMessageDialog(messagePane, "Device checkin- successful !");
+            
+            } else {
+                JOptionPane.showMessageDialog(errorPane, "Device cannot be checkedin ");
             }
 
             output.close();
