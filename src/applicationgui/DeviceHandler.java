@@ -76,6 +76,13 @@ public class DeviceHandler {
         return false;
     }
   
+    public boolean isCheckedOut(Device d){
+        if(d.getCheckedOutTo() != null){
+            return true;
+        }
+        return false;
+    }
+  
   public void SerializeDevice() {
         try {
             FileOutputStream fileOut = new FileOutputStream("devices.ser");

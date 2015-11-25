@@ -311,8 +311,7 @@ public class UserManagementForm extends javax.swing.JFrame {
             }else if(userBtn.isSelected() == true){
                  u = new User(idBox.getText(), fNameBox.getText(), lNameBox.getText(), emailBox.getText(), passBox.getText(), User.UserType.USER);
             }else{
-                //TO-DO add a patron class and initialize a patron object here
-                u = null;
+                u = new Patron(idBox.getText(), fNameBox.getText(), lNameBox.getText(), emailBox.getText());
             }
             OutputStream os = s.getOutputStream();
             ObjectOutputStream oos = new ObjectOutputStream(os);

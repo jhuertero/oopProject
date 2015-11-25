@@ -98,11 +98,17 @@
       <Properties>
         <Property name="text" type="java.lang.String" value="Check In"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="checkInButtonActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JButton" name="checkOutButton">
       <Properties>
         <Property name="text" type="java.lang.String" value="Check Out"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="checkOutButtonActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel3">
       <Properties>

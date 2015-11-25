@@ -103,7 +103,6 @@ public class ApplicationServer {
         }*/
         DeviceHandler dh = new DeviceHandler();
         PersonHandler ph = new PersonHandler();
-        
         ph.DeserializePersonList();
         dh.DeserializeDeviceList();
         try{

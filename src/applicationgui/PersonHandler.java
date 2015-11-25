@@ -44,16 +44,30 @@ public class PersonHandler {
         return p;
     }
     
-    public void updatePerson(String id, String firstName, String lastName, String email){
-        for(int i = 0; i < persons.size(); i++){
-            if(persons.get(i).getID().equals(id)){
-                persons.get(i).setFirstName(firstName);
-                persons.get(i).setLastName(lastName);
-                persons.get(i).setEmail(email);
+    public boolean checkoutDevice (String patron_id, String device_id){
+      boolean status = false;
+            for (Person person : persons) {
+            if (person.getID().equals(patron_id)) {
+                //person.checkoutDevice(device_id);
+                status = true;
             }
         }
-    }
+       
+        return status;
+    } 
     
+     public boolean checkinDevice (String patron_id, String device_id){
+      boolean status = false;
+            for (Person person : persons) {
+            if (person.getID().equals(patron_id)) {
+                //person.checkinDevice(device_id);
+                status = true;
+            }
+        }
+       
+        return status;
+    } 
+        
     public boolean deletePerson(String id){
         Person p;
         for(int i = 0; i < persons.size(); i++){
