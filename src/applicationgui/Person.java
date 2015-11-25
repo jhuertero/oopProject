@@ -62,8 +62,10 @@ public class Person implements java.io.Serializable{
         return id + " " + firstName + " " + lastName + " " + email;
     }
     
-    public void updatePerson(String device_id){
+    public void checkoutDevice(String device_id){
         
-        // no need to implement here, overriden by patron
+    }
+      public void checkinDevice(String device_id){
+        
     }
 }
