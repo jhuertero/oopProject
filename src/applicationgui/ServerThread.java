@@ -69,6 +69,10 @@ public class ServerThread extends Thread{
                     case "checkinDevice":
                         checkinDevice(socket);
                         break;
+                    case "forgetPassword":
+                        getPassword(socket, ph);
+                        break;
+                        
                 }
                 System.out.println(message);
             }
@@ -389,6 +393,29 @@ public class ServerThread extends Thread{
                 
             }
         }catch(Exception e){
+    private synchronized void getPassword(Socket s, PersonHandler personHandler){
+        String response = "-1"; // default response to "error"
+        try {
+            ObjectInputStream input = new ObjectInputStream(socket.getInputStream());
+            ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream());
+            try {
+                String id = (String)input.readObject();
+                User passUser = (User)personHandler.getPerson(id);
+                if (passUser != null) {
+                    response = passUser.getPassword();
+                    System.out.println(response);
+                }
+            } catch (Exception e) {
+                System.err.println("Error: " + e.getMessage());
+                e.printStackTrace(System.err);
+
+            } finally {
+                output.writeObject(response);
+                input.close();
+                output.close();
+            }
+        } catch (Exception e) {
+            //TO-DO might need to add the -1 section here
             System.err.println("Error: " + e.getMessage());
             e.printStackTrace(System.err);
         }
