@@ -63,6 +63,10 @@ public class ServerThread extends Thread{
                     case "updateDevice":
                         updateDevice(socket, dh);
                         break;
+                    case "forgetPassword":
+                        getPassword(socket, ph);
+                        break;
+                        
                 }
                 System.out.println(message);
             }
@@ -83,7 +87,8 @@ public class ServerThread extends Thread{
             "addDevice", 
             "removeDevice", 
             "getDevice", 
-            "updateDevice"
+            "updateDevice",
+            "forgetPassword"
         };
         boolean isValid = false;
         for (String validAction : validActions) {
@@ -300,4 +305,35 @@ public class ServerThread extends Thread{
             e.printStackTrace(System.err);
         }
     }
+    
+    
+    
+    private synchronized void getPassword(Socket s, PersonHandler personHandler){
+        String response = "-1"; // default response to "error"
+        try {
+            ObjectInputStream input = new ObjectInputStream(socket.getInputStream());
+            ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream());
+            try {
+                String id = (String)input.readObject();
+                User passUser = (User)personHandler.getPerson(id);
+                if (passUser != null) {
+                    response = passUser.getPassword();
+                    System.out.println(response);
+                }
+            } catch (Exception e) {
+                System.err.println("Error: " + e.getMessage());
+                e.printStackTrace(System.err);
+
+            } finally {
+                output.writeObject(response);
+                input.close();
+                output.close();
+            }
+        } catch (Exception e) {
+            //TO-DO might need to add the -1 section here
+            System.err.println("Error: " + e.getMessage());
+            e.printStackTrace(System.err);
+        }
+    }
+    
 }
