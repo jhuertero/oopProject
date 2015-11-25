@@ -44,11 +44,23 @@ public class PersonHandler {
         return p;
     }
     
-    public boolean updatePerson(String patron_id, String device_id){
+    public boolean checkoutDevice (String patron_id, String device_id){
       boolean status = false;
             for (Person person : persons) {
             if (person.getID().equals(patron_id)) {
-                person.updatePerson(device_id);
+                person.checkoutDevice(device_id);
+                status = true;
+            }
+        }
+       
+        return status;
+    } 
+    
+     public boolean checkinDevice (String patron_id, String device_id){
+      boolean status = false;
+            for (Person person : persons) {
+            if (person.getID().equals(patron_id)) {
+                person.checkinDevice(device_id);
                 status = true;
             }
         }
