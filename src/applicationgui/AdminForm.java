@@ -138,7 +138,7 @@ public class AdminForm extends javax.swing.JFrame {
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         EquipManagementForm f = new EquipManagementForm(this);
-        f.setSize(480, 80);
+        //f.setSize(480, 80);
         f.setLocationRelativeTo(null);
         this.setVisible(false);
         f.setVisible(true);
