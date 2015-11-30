@@ -6,6 +6,7 @@
 package applicationgui;
 
 
+import java.awt.CardLayout;
 import java.awt.Component;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
@@ -13,6 +14,7 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import javax.swing.JCheckBox;
+import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -28,6 +30,8 @@ public class EquipManagementForm extends javax.swing.JFrame {
      */
     
     AdminForm preForm;
+    private static final String SERVER_NAME = "localhost";
+    private static final int PORT_NUMBER = 8765;
     
     public EquipManagementForm() {
         initComponents();
@@ -36,9 +40,11 @@ public class EquipManagementForm extends javax.swing.JFrame {
     public EquipManagementForm(AdminForm form) {
         initComponents();
         preForm = form;
-        this.setLayout(null);
-        computerPanel.setLayout(null);
-        cameraPanel.setLayout(null);
+        //this.setLayout(null);
+        //computerPanel.setLayout(null);
+        //cameraPanel.setLayout(null);
+        deviceInfoSearchPanel.setVisible(false);
+        deviceDetailsPanel.setVisible(false);
     }
 
     /**
@@ -56,6 +62,8 @@ public class EquipManagementForm extends javax.swing.JFrame {
         addERBtn = new javax.swing.JRadioButton();
         removeERBtn = new javax.swing.JRadioButton();
         updateERBtn = new javax.swing.JRadioButton();
+        deviceInfoSearchPanel = new javax.swing.JPanel();
+        searchPanel = new javax.swing.JPanel();
         eBarcodeLabel = new javax.swing.JLabel();
         searchCode = new javax.swing.JTextField();
         retrieveBtn = new javax.swing.JButton();
@@ -71,7 +79,8 @@ public class EquipManagementForm extends javax.swing.JFrame {
         computerBtn = new javax.swing.JRadioButton();
         cameraBtn = new javax.swing.JRadioButton();
         hpBtn = new javax.swing.JRadioButton();
-        laptopCheck = new javax.swing.JCheckBox();
+        jLabel15 = new javax.swing.JLabel();
+        deviceDetailsPanel = new javax.swing.JPanel();
         computerPanel = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         cpuBox = new javax.swing.JTextField();
@@ -79,10 +88,10 @@ public class EquipManagementForm extends javax.swing.JFrame {
         ramBox = new javax.swing.JTextField();
         jLabel7 = new javax.swing.JLabel();
         diskBox = new javax.swing.JTextField();
-        addComputerBtn = new javax.swing.JButton();
         screenLabel = new javax.swing.JLabel();
         screenBox = new javax.swing.JTextField();
         touchCheck = new javax.swing.JCheckBox();
+        laptopCheck = new javax.swing.JCheckBox();
         cameraPanel = new javax.swing.JPanel();
         jLabel8 = new javax.swing.JLabel();
         cTypeBox = new javax.swing.JTextField();
@@ -92,7 +101,6 @@ public class EquipManagementForm extends javax.swing.JFrame {
         scBox = new javax.swing.JTextField();
         jLabel11 = new javax.swing.JLabel();
         stBox = new javax.swing.JTextField();
-        CameraBtn = new javax.swing.JButton();
         hpPanel = new javax.swing.JPanel();
         jLabel12 = new javax.swing.JLabel();
         hpTypeBox = new javax.swing.JTextField();
@@ -102,7 +110,7 @@ public class EquipManagementForm extends javax.swing.JFrame {
         plugBox = new javax.swing.JTextField();
         micCheck = new javax.swing.JCheckBox();
         volumeCheck = new javax.swing.JCheckBox();
-        addHP = new javax.swing.JButton();
+        btnSave = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Equipment Management");
@@ -136,7 +144,14 @@ public class EquipManagementForm extends javax.swing.JFrame {
             }
         });
 
-        eBarcodeLabel.setText("Equipment Barcode:");
+        deviceInfoSearchPanel.setEnabled(false);
+        deviceInfoSearchPanel.setLayout(new java.awt.CardLayout());
+
+        searchPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Search", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 1, 11))); // NOI18N
+        searchPanel.setPreferredSize(new java.awt.Dimension(380, 57));
+        searchPanel.setRequestFocusEnabled(false);
+
+        eBarcodeLabel.setText("Device Barcode:");
 
         searchCode.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -150,6 +165,34 @@ public class EquipManagementForm extends javax.swing.JFrame {
                 retrieveBtnActionPerformed(evt);
             }
         });
+
+        javax.swing.GroupLayout searchPanelLayout = new javax.swing.GroupLayout(searchPanel);
+        searchPanel.setLayout(searchPanelLayout);
+        searchPanelLayout.setHorizontalGroup(
+            searchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(searchPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(eBarcodeLabel)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(searchCode, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(retrieveBtn)
+                .addContainerGap(43, Short.MAX_VALUE))
+        );
+        searchPanelLayout.setVerticalGroup(
+            searchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(searchPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(searchPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(eBarcodeLabel)
+                    .addComponent(searchCode, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(retrieveBtn))
+                .addContainerGap(54, Short.MAX_VALUE))
+        );
+
+        deviceInfoSearchPanel.add(searchPanel, "search");
+
+        devicePanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Device Information", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 1, 11))); // NOI18N
 
         jLabel2.setText("Device Barcode:");
 
@@ -184,71 +227,72 @@ public class EquipManagementForm extends javax.swing.JFrame {
             }
         });
 
-        laptopCheck.setText("Laptop");
-        laptopCheck.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                laptopCheckActionPerformed(evt);
-            }
-        });
+        jLabel15.setText("Device Type:");
 
         javax.swing.GroupLayout devicePanelLayout = new javax.swing.GroupLayout(devicePanel);
         devicePanel.setLayout(devicePanelLayout);
         devicePanelLayout.setHorizontalGroup(
             devicePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(devicePanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(devicePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel15)
+                    .addComponent(jLabel4)
+                    .addComponent(jLabel2))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(devicePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(devicePanelLayout.createSequentialGroup()
-                        .addGap(23, 23, 23)
-                        .addGroup(devicePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(devicePanelLayout.createSequentialGroup()
-                                .addComponent(jLabel2)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(bCodeBox))
-                            .addGroup(devicePanelLayout.createSequentialGroup()
-                                .addComponent(jLabel4)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 32, Short.MAX_VALUE)
-                                .addComponent(deviceBox, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(18, 18, 18)
                         .addGroup(devicePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel5)
-                            .addComponent(jLabel3))
+                            .addComponent(deviceBox, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(bCodeBox, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(devicePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(serialBox, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(condBox, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(devicePanelLayout.createSequentialGroup()
+                                .addComponent(jLabel3)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(serialBox))
+                            .addGroup(devicePanelLayout.createSequentialGroup()
+                                .addComponent(jLabel5)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(condBox))))
                     .addGroup(devicePanelLayout.createSequentialGroup()
-                        .addGap(63, 63, 63)
-                        .addComponent(laptopCheck)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(computerBtn)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(cameraBtn)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(hpBtn)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(hpBtn)
+                        .addGap(0, 45, Short.MAX_VALUE)))
+                .addContainerGap())
         );
         devicePanelLayout.setVerticalGroup(
             devicePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(devicePanelLayout.createSequentialGroup()
-                .addContainerGap(18, Short.MAX_VALUE)
+                .addContainerGap()
                 .addGroup(devicePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(bCodeBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel3)
                     .addComponent(serialBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(devicePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
                     .addComponent(deviceBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel5)
                     .addComponent(condBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(7, 7, 7)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 6, Short.MAX_VALUE)
                 .addGroup(devicePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel15)
                     .addComponent(computerBtn)
                     .addComponent(cameraBtn)
-                    .addComponent(hpBtn)
-                    .addComponent(laptopCheck)))
+                    .addComponent(hpBtn))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
+
+        deviceInfoSearchPanel.add(devicePanel, "info");
+
+        deviceDetailsPanel.setLayout(new java.awt.CardLayout());
+
+        computerPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Computer Details", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 1, 11))); // NOI18N
 
         jLabel1.setText("CPU:");
 
@@ -256,47 +300,51 @@ public class EquipManagementForm extends javax.swing.JFrame {
 
         jLabel7.setText("Disk Size:");
 
-        addComputerBtn.setText("Submit");
-        addComputerBtn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                addComputerBtnActionPerformed(evt);
-            }
-        });
-
         screenLabel.setText("Screen Size:");
+        screenLabel.setEnabled(false);
+
+        screenBox.setEnabled(false);
 
         touchCheck.setText("Touch Screen");
+        touchCheck.setEnabled(false);
+
+        laptopCheck.setText("Laptop");
+        laptopCheck.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                laptopCheckActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout computerPanelLayout = new javax.swing.GroupLayout(computerPanel);
         computerPanel.setLayout(computerPanelLayout);
         computerPanelLayout.setHorizontalGroup(
             computerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(computerPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(computerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(computerPanelLayout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(cpuBox, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabel6)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(ramBox, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(computerPanelLayout.createSequentialGroup()
+                        .addGap(10, 10, 10)
+                        .addComponent(laptopCheck)
+                        .addGap(12, 12, 12)
+                        .addComponent(screenLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(screenBox)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(computerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(computerPanelLayout.createSequentialGroup()
-                        .addGap(20, 20, 20)
-                        .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(cpuBox, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jLabel6)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(ramBox, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
                         .addComponent(jLabel7)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(diskBox, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(computerPanelLayout.createSequentialGroup()
-                        .addGap(82, 82, 82)
-                        .addComponent(screenLabel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(screenBox, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(34, 34, 34)
-                        .addComponent(touchCheck))
-                    .addGroup(computerPanelLayout.createSequentialGroup()
-                        .addGap(186, 186, 186)
-                        .addComponent(addComputerBtn)))
-                .addContainerGap(40, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(diskBox))
+                    .addComponent(touchCheck))
+                .addContainerGap())
         );
         computerPanelLayout.setVerticalGroup(
             computerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -309,15 +357,19 @@ public class EquipManagementForm extends javax.swing.JFrame {
                     .addComponent(ramBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel7)
                     .addComponent(diskBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(computerPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(screenLabel)
                     .addComponent(screenBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(touchCheck))
-                .addGap(18, 18, 18)
-                .addComponent(addComputerBtn)
-                .addContainerGap(12, Short.MAX_VALUE))
+                    .addComponent(touchCheck)
+                    .addComponent(laptopCheck))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
+
+        deviceDetailsPanel.add(computerPanel, "computer");
+        computerPanel.getAccessibleContext().setAccessibleDescription("");
+
+        cameraPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Camera Details", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 1, 11))); // NOI18N
 
         jLabel8.setText("Camera Type:");
 
@@ -327,62 +379,50 @@ public class EquipManagementForm extends javax.swing.JFrame {
 
         jLabel11.setText("Storage Type:");
 
-        CameraBtn.setText("Submit");
-        CameraBtn.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                CameraBtnActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout cameraPanelLayout = new javax.swing.GroupLayout(cameraPanel);
         cameraPanel.setLayout(cameraPanelLayout);
         cameraPanelLayout.setHorizontalGroup(
             cameraPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(cameraPanelLayout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(cameraPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(cameraPanelLayout.createSequentialGroup()
-                        .addGap(32, 32, 32)
-                        .addGroup(cameraPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel10)
-                            .addComponent(jLabel8))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(cameraPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(cTypeBox, javax.swing.GroupLayout.DEFAULT_SIZE, 90, Short.MAX_VALUE)
-                            .addComponent(scBox))
-                        .addGap(18, 18, 18)
-                        .addGroup(cameraPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(cameraPanelLayout.createSequentialGroup()
-                                .addComponent(jLabel9)
-                                .addGap(26, 26, 26)
-                                .addComponent(mpBox, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(cameraPanelLayout.createSequentialGroup()
-                                .addComponent(jLabel11)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(stBox))))
-                    .addGroup(cameraPanelLayout.createSequentialGroup()
-                        .addGap(185, 185, 185)
-                        .addComponent(CameraBtn)))
-                .addContainerGap(33, Short.MAX_VALUE))
+                    .addComponent(jLabel11, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel8, javax.swing.GroupLayout.Alignment.TRAILING))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(cameraPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(cTypeBox, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(stBox, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(cameraPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel10)
+                    .addComponent(jLabel9))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(cameraPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(mpBox)
+                    .addComponent(scBox))
+                .addContainerGap())
         );
         cameraPanelLayout.setVerticalGroup(
             cameraPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(cameraPanelLayout.createSequentialGroup()
-                .addGap(17, 17, 17)
+                .addContainerGap()
                 .addGroup(cameraPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel8)
                     .addComponent(cTypeBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel9)
                     .addComponent(mpBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(cameraPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel10)
-                    .addComponent(scBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel11)
-                    .addComponent(stBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 19, Short.MAX_VALUE)
-                .addComponent(CameraBtn)
-                .addContainerGap())
+                    .addComponent(stBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel10)
+                    .addComponent(scBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
+
+        deviceDetailsPanel.add(cameraPanel, "camera");
+
+        hpPanel.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Headphones Details", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 1, 11))); // NOI18N
 
         jLabel12.setText("Headphone Type:");
 
@@ -394,13 +434,6 @@ public class EquipManagementForm extends javax.swing.JFrame {
 
         volumeCheck.setText("Volume Control");
 
-        addHP.setText("Submit");
-        addHP.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                addHPActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout hpPanelLayout = new javax.swing.GroupLayout(hpPanel);
         hpPanel.setLayout(hpPanelLayout);
         hpPanelLayout.setHorizontalGroup(
@@ -408,102 +441,91 @@ public class EquipManagementForm extends javax.swing.JFrame {
             .addGroup(hpPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(hpPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, hpPanelLayout.createSequentialGroup()
-                        .addComponent(jLabel12)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED))
                     .addGroup(hpPanelLayout.createSequentialGroup()
                         .addComponent(jLabel14)
-                        .addGap(26, 26, 26)))
-                .addGroup(hpPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(hpTypeBox, javax.swing.GroupLayout.DEFAULT_SIZE, 99, Short.MAX_VALUE)
-                    .addComponent(plugBox))
-                .addGap(18, 18, 18)
-                .addGroup(hpPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(hpPanelLayout.createSequentialGroup()
-                        .addComponent(jLabel13)
-                        .addGap(10, 10, 10)
-                        .addComponent(cordBox, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(hpPanelLayout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(plugBox, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(14, 14, 14)
                         .addComponent(micCheck)
-                        .addGap(18, 18, 18)
-                        .addComponent(volumeCheck)))
-                .addGap(36, 36, 36))
-            .addGroup(hpPanelLayout.createSequentialGroup()
-                .addGap(197, 197, 197)
-                .addComponent(addHP)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(volumeCheck)
+                        .addGap(0, 46, Short.MAX_VALUE))
+                    .addGroup(hpPanelLayout.createSequentialGroup()
+                        .addComponent(jLabel12)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(hpTypeBox, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabel13)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(cordBox)))
+                .addContainerGap())
         );
         hpPanelLayout.setVerticalGroup(
             hpPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(hpPanelLayout.createSequentialGroup()
-                .addGap(19, 19, 19)
+                .addContainerGap()
                 .addGroup(hpPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel12)
                     .addComponent(hpTypeBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel13)
                     .addComponent(cordBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(hpPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel14)
                     .addComponent(plugBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(micCheck)
-                    .addComponent(volumeCheck))
-                .addGap(18, 18, 18)
-                .addComponent(addHP)
+                    .addComponent(volumeCheck)
+                    .addComponent(micCheck))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
+
+        hpPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {cordBox, plugBox});
+
+        deviceDetailsPanel.add(hpPanel, "headphones");
+
+        btnSave.setText("Save");
+        btnSave.setPreferredSize(new java.awt.Dimension(75, 23));
+        btnSave.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSaveActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(devicePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(computerPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(cameraPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(hpPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(17, 17, 17)
-                        .addComponent(eBarcodeLabel)
-                        .addGap(18, 18, 18)
-                        .addComponent(searchCode, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(retrieveBtn))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(31, 31, 31)
+                        .addGap(23, 23, 23)
                         .addComponent(addERBtn)
-                        .addGap(18, 18, 18)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(removeERBtn)
-                        .addGap(18, 18, 18)
-                        .addComponent(updateERBtn)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(updateERBtn))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(158, 158, 158)
+                        .addComponent(btnSave, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(deviceInfoSearchPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(deviceDetailsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(19, 19, 19)
+                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(addERBtn)
                     .addComponent(removeERBtn)
                     .addComponent(updateERBtn))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(eBarcodeLabel)
-                    .addComponent(searchCode, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(retrieveBtn))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(devicePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(computerPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(cameraPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(hpPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(deviceInfoSearchPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(deviceDetailsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnSave, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         pack();
@@ -514,233 +536,77 @@ public class EquipManagementForm extends javax.swing.JFrame {
     }//GEN-LAST:event_formWindowClosed
 
     private void updateERBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_updateERBtnActionPerformed
-        this.setSize(480, 130);
-        retrieveBtn.setVisible(true);
-        searchCode.setText("");
-        searchCode.setVisible(true);
-        eBarcodeLabel.setVisible(true);
-        devicePanel.setVisible(false);
+        clearAllPanels();
+        showDeviceInfoSearchCard("search"); // show the device search panel
+        deviceDetailsPanel.setVisible(false); // hide the device details panel
+        btnSave.setText("Update"); // relabel the save button
+        btnSave.setEnabled(false); // disable the save button
     }//GEN-LAST:event_updateERBtnActionPerformed
 
     private void removeERBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeERBtnActionPerformed
-        this.setSize(480, 130);
-        retrieveBtn.setVisible(true);
-        searchCode.setText("");
-        searchCode.setVisible(true);
-        eBarcodeLabel.setVisible(true);
-        devicePanel.setVisible(false);
+        clearAllPanels();
+        showDeviceInfoSearchCard("search"); // show the device search panel
+        deviceDetailsPanel.setVisible(false); // hide the device details panel
+        btnSave.setText("Remove"); // relabel the save button
+        btnSave.setEnabled(false); // disable the save button
     }//GEN-LAST:event_removeERBtnActionPerformed
 
     private void addERBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addERBtnActionPerformed
-        this.setSize(480, 200);
-        retrieveBtn.setVisible(false);
-        searchCode.setVisible(false);
-        eBarcodeLabel.setVisible(false);
-        devicePanel.setLocation(0, 50);
-        devicePanel.setVisible(true);
-        deviceGroup.clearSelection();
-        laptopCheck.setEnabled(false);
-        laptopCheck.setSelected(false);
-        computerPanel.setVisible(false);
+        clearAllPanels();
+        showDeviceInfoSearchCard("info"); // show the device info panel
+        deviceDetailsPanel.setVisible(false); // hide the device details panel
+        // initialize the device info panel
         bCodeBox.setEnabled(true);
-        
-        clearPanel(devicePanel);
-        clearPanel(computerPanel);
-        clearPanel(cameraPanel);
-        clearPanel(hpPanel);
+        deviceGroup.clearSelection();
+        btnSave.setText("Add"); // relabel the save button
+        btnSave.setEnabled(true); // enable the save button
     }//GEN-LAST:event_addERBtnActionPerformed
-
+    
     private void computerBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_computerBtnActionPerformed
-        this.setSize(480, 280);
-        this.setLocationRelativeTo(null);
-        laptopCheck.setEnabled(true);
+        showDeviceDetailsCard("computer"); // show the computer panel
+        // initialize computer panel
         laptopCheck.setSelected(false);
-        computerPanel.setVisible(true);
-        computerPanel.setLocation(0, 160);
-        screenLabel.setVisible(false);
-        screenBox.setVisible(false);
-        touchCheck.setVisible(false);
-        addComputerBtn.setLocation(200, 50);
-        cameraPanel.setVisible(false);
-        hpPanel.setVisible(false);
+        updateLaptopControlsDisplay();
     }//GEN-LAST:event_computerBtnActionPerformed
 
     private void cameraBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cameraBtnActionPerformed
-        this.setSize(480, 325);
-        this.setLocationRelativeTo(null);
-        laptopCheck.setEnabled(false);
-        laptopCheck.setSelected(false);
-        computerPanel.setVisible(false);
-        cameraPanel.setLocation(0,160);
-        cameraPanel.setVisible(true);
-        hpPanel.setVisible(false);
+        showDeviceDetailsCard("camera"); // show the camera panel
     }//GEN-LAST:event_cameraBtnActionPerformed
 
     private void hpBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hpBtnActionPerformed
-        this.setSize(480, 330);
-        this.setLocationRelativeTo(null);
-        laptopCheck.setEnabled(false);
-        laptopCheck.setSelected(false);
-        computerPanel.setVisible(false);
-        cameraPanel.setVisible(false);
-        hpPanel.setVisible(true);
-        hpPanel.setLocation(0,160);
+        showDeviceDetailsCard("headphones"); // show the headphones panel
     }//GEN-LAST:event_hpBtnActionPerformed
 
     private void laptopCheckActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_laptopCheckActionPerformed
-        if(laptopCheck.isSelected()){
-            screenLabel.setVisible(true);
-            screenBox.setVisible(true);
-            touchCheck.setVisible(true);
-            addComputerBtn.setLocation(200, 90);
-            this.setSize(480, 320);
-        }else{
-            screenLabel.setVisible(false);
-            screenBox.setVisible(false);
-            touchCheck.setVisible(false);
-            addComputerBtn.setLocation(200, 50);
-            this.setSize(480, 280);
-        }
+        updateLaptopControlsDisplay();
     }//GEN-LAST:event_laptopCheckActionPerformed
     
-    private void addComputerBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addComputerBtnActionPerformed
-        DeviceManagerAction devMgmtAction = getDeviceManagerAction();
-
-        if ((devMgmtAction == DeviceManagerAction.ADD)
-                || (devMgmtAction == DeviceManagerAction.UPDATE)) {
-            try {
-                Device computer;
-                if (!laptopCheck.isSelected()) {
-                    computer = new Computer(
-                            bCodeBox.getText(),
-                            deviceBox.getText(),
-                            serialBox.getText(),
-                            condBox.getText(),
-                            Device.deviceType.computer,
-                            cpuBox.getText(),
-                            ramBox.getText(),
-                            diskBox.getText());
-                } else {
-                    computer = new Laptop(
-                            bCodeBox.getText(),
-                            deviceBox.getText(),
-                            serialBox.getText(),
-                            condBox.getText(),
-                            Device.deviceType.laptop,
-                            cpuBox.getText(),
-                            ramBox.getText(),
-                            diskBox.getText(),
-                            screenBox.getText(),
-                            touchCheck.isSelected());
-                }
-                switch (devMgmtAction) {
-                    case ADD:
-                        addDevice(computer);
-                        break;
-                    case UPDATE:
-                        updateDevice(computer);
-                        break;
-                }
-            } catch (Exception e) {
-                System.err.println("Error: " + e.getMessage());
+    private void updateLaptopControlsDisplay() {
+        JComponent[] laptopControls = {screenLabel, screenBox, touchCheck};
+        for (JComponent laptopControl : laptopControls) {
+                laptopControl.setEnabled(laptopCheck.isSelected());
             }
-        } else if (devMgmtAction == DeviceManagerAction.REMOVE) {
-            removeDevice();
-        }
-    }//GEN-LAST:event_addComputerBtnActionPerformed
-
-    private void CameraBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CameraBtnActionPerformed
-        DeviceManagerAction devMgmtAction = getDeviceManagerAction();
-
-        if ((devMgmtAction == DeviceManagerAction.ADD)
-                || (devMgmtAction == DeviceManagerAction.UPDATE)) {
-            try {
-                Device camera = new Camera(
-                        bCodeBox.getText(),
-                        deviceBox.getText(),
-                        serialBox.getText(),
-                        condBox.getText(),
-                        Device.deviceType.camera,
-                        cTypeBox.getText(),
-                        mpBox.getText(),
-                        scBox.getText(),
-                        stBox.getText()
-                );
-                switch (devMgmtAction) {
-                    case ADD:
-                        addDevice(camera);
-                        break;
-                    case UPDATE:
-                        updateDevice(camera);
-                        break;
-                }
-            } catch (Exception e) {
-                System.err.println("Error: " + e.getMessage());
-            }
-        } else if (devMgmtAction == DeviceManagerAction.REMOVE) {
-            removeDevice();
-        }
-    }//GEN-LAST:event_CameraBtnActionPerformed
-
-    private void addHPActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addHPActionPerformed
-        DeviceManagerAction devMgmtAction = getDeviceManagerAction();
-
-        if ((devMgmtAction == DeviceManagerAction.ADD)
-                || (devMgmtAction == DeviceManagerAction.UPDATE)) {
-            try {
-                int cordLength = Integer.parseInt(cordBox.getText());
-                double plugDiameter = Double.parseDouble(plugBox.getText());
-                Device headphones = new Headphones(
-                        bCodeBox.getText(),
-                        deviceBox.getText(),
-                        serialBox.getText(),
-                        condBox.getText(),
-                        Device.deviceType.headphones,
-                        hpTypeBox.getText(),
-                        micCheck.isSelected(),
-                        volumeCheck.isSelected(),
-                        cordLength,
-                        plugDiameter
-                );
-                switch (devMgmtAction) {
-                    case ADD:
-                        addDevice(headphones);
-                        break;
-                    case UPDATE:
-                        updateDevice(headphones);
-                        break;
-                }
-            } catch (NumberFormatException e) {
-                JOptionPane.showMessageDialog(messagePane, "Invalid Cord Length or Cord Diameter input");
-                System.out.println(e.toString());
-            }
-        } else if (devMgmtAction == DeviceManagerAction.REMOVE) {
-            removeDevice();
-        }
-    }//GEN-LAST:event_addHPActionPerformed
-
+    }
+    
     private void retrieveBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_retrieveBtnActionPerformed
         try{
-            Socket s = new Socket("localHost", 8765);
-            String message = "getDevice";
-            OutputStream os = s.getOutputStream();
-            ObjectOutputStream oos = new ObjectOutputStream(os);
-            oos.writeObject(message);
+            Socket socket = new Socket(SERVER_NAME, PORT_NUMBER);
+            String action = "getDevice";
+            ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream());
+            output.writeObject(action);
             
-            InputStream is = s.getInputStream();
-            ObjectInputStream ois = new ObjectInputStream(is);
-            message = (String)ois.readObject();
-            System.out.println(message);
-            if(message.equals("OK")){
-                System.out.println(message);
-                getDevice(s);
+            ObjectInputStream input = new ObjectInputStream(socket.getInputStream());
+            String response = (String)input.readObject();
+            System.out.println(response);
+            if(response.equals("OK")){
+                System.out.println(response);
+                getDevice(socket);
             }else{
                 JOptionPane.showMessageDialog(messagePane, "Error");
             }
-            ois.close();
-            is.close();
-            os.close();
-            s.close();   
+            input.close();
+            output.close();
+            socket.close();   
         }catch(Exception e){
             System.err.println("Error: " + e.getMessage());
         }
@@ -750,6 +616,80 @@ public class EquipManagementForm extends javax.swing.JFrame {
         retrieveBtn.doClick();
     }//GEN-LAST:event_searchCodeActionPerformed
 
+    private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
+        DeviceManagerAction devMgmtAction = getDeviceManagerAction();
+
+        try {
+            switch (devMgmtAction) {
+                case ADD:
+                    addDevice(createDevice());
+                    break;
+                case UPDATE:
+                    updateDevice(createDevice());
+                    break;
+                case REMOVE:
+                    removeDevice();
+                    break;
+            }
+        } catch (Exception e) {
+            System.err.println("Error: " + e.getMessage());
+        }
+    }//GEN-LAST:event_btnSaveActionPerformed
+
+    private void showCard(JPanel panel, String cardName) {
+        panel.setVisible(true);
+        CardLayout cardLayout = (CardLayout) panel.getLayout();
+        cardLayout.show(panel, cardName);
+    }
+
+    private void showDeviceInfoSearchCard(String cardName) {
+        showCard(deviceInfoSearchPanel, cardName);
+    }
+
+    private void showDeviceDetailsCard(String cardName) {
+        showCard(deviceDetailsPanel, cardName);
+    }
+
+    private Device createDevice() {
+        Device device = null;
+        try {
+            if (computerBtn.isSelected()) {
+                if (!laptopCheck.isSelected()) {
+                    device = new Computer(
+                            bCodeBox.getText(), deviceBox.getText(), serialBox.getText(), condBox.getText(), Device.deviceType.computer,
+                            cpuBox.getText(), ramBox.getText(), diskBox.getText());
+                } else {
+                    device = new Laptop(
+                            bCodeBox.getText(), deviceBox.getText(), serialBox.getText(), condBox.getText(), Device.deviceType.laptop,
+                            cpuBox.getText(), ramBox.getText(), diskBox.getText(), screenBox.getText(), touchCheck.isSelected());
+                }
+            } else if (cameraBtn.isSelected()) {
+                device = new Camera(
+                        bCodeBox.getText(), deviceBox.getText(), serialBox.getText(), condBox.getText(), Device.deviceType.camera,
+                        cTypeBox.getText(), mpBox.getText(), scBox.getText(), stBox.getText());
+            } else if (hpBtn.isSelected()) {
+                int cordLength = 0;
+                double plugDiameter = 0;
+                try {
+                    cordLength = Integer.parseInt(cordBox.getText());
+                    plugDiameter = Double.parseDouble(plugBox.getText());
+                    device = new Headphones(
+                            bCodeBox.getText(), deviceBox.getText(), serialBox.getText(), condBox.getText(), Device.deviceType.headphones,
+                            hpTypeBox.getText(), micCheck.isSelected(), volumeCheck.isSelected(), cordLength, plugDiameter);
+
+                } catch (NumberFormatException e) {
+                    JOptionPane.showMessageDialog(messagePane, "Invalid Cord Length or Cord Diameter input");
+                    System.out.println(e.toString());
+                    throw(e);
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Error: " + e.getMessage());
+            throw(e);
+        }
+        return device;
+    }
+    
     private void clearPanel(JPanel panel) {
         for (Component component : panel.getComponents()) {
             if (component instanceof JTextField) {
@@ -758,6 +698,11 @@ public class EquipManagementForm extends javax.swing.JFrame {
                 ((JCheckBox) component).setSelected(false);
             }
         }
+    }
+        
+    private void clearAllPanels() {
+        for (JPanel panel : new JPanel[] {searchPanel, devicePanel, computerPanel, cameraPanel, hpPanel})
+            clearPanel(panel);
     }
     
     private enum DeviceManagerAction {ADD, REMOVE, UPDATE};
@@ -775,172 +720,94 @@ public class EquipManagementForm extends javax.swing.JFrame {
 
         return devAction;
     }
-   
+       
+    private Object doServerActionToObject(String action, Object obj) {
+        Object response = null;
+        try {
+            Socket socket = new Socket(SERVER_NAME, PORT_NUMBER);
+            ObjectOutputStream output = null;
+            ObjectInputStream input = null;
+            
+            output = new ObjectOutputStream(socket.getOutputStream());
+            output.writeObject(action);
+            input = new ObjectInputStream(socket.getInputStream());
+            response = (String) input.readObject();
+
+            if (response.equals("OK")) {
+                System.out.println(response);
+                output = new ObjectOutputStream(socket.getOutputStream());
+                output.writeObject(obj);
+                input = new ObjectInputStream(socket.getInputStream());
+                response = input.readObject();
+            }
+            input.close();
+            output.close();
+            socket.close();
+        } catch (Exception e) {
+            System.err.println("Error: " + e.getMessage());
+        }
+        
+        return response;
+    }
+
     private void addDevice(Device device) {
         try {
-            Socket s = new Socket("localHost", 8765);
-            String message = "addDevice";
-            OutputStream os = s.getOutputStream();
-            ObjectOutputStream oos = new ObjectOutputStream(os);
-            oos.writeObject(message);
-
-            InputStream is = s.getInputStream();
-            ObjectInputStream ois = new ObjectInputStream(is);
-            message = (String) ois.readObject();
-            System.out.println(message);
-            if (message.equals("OK")) {
-                System.out.println(message);
-                addDevice(s, device);
+            String response = (String) doServerActionToObject("addDevice", device);
+            if (response.equals("1")) {
+                JOptionPane.showMessageDialog(messagePane, "Device added succesfully");
             } else {
-                JOptionPane.showMessageDialog(messagePane, "Error");
+                JOptionPane.showMessageDialog(messagePane, "Device already exists");
             }
-            ois.close();
-            is.close();
-            os.close();
-            s.close();
-
         } catch (Exception e) {
             System.err.println("Error: " + e.getMessage());
         }
-    }
-   
-    private void addDevice(Socket s, Device d){
-        try{
-            OutputStream os = s.getOutputStream();
-            ObjectOutputStream oos = new ObjectOutputStream(os);
-            oos.writeObject(d);
-            
-            InputStream is = s.getInputStream();
-            ObjectInputStream ois = new ObjectInputStream(is);
-            String message = (String)ois.readObject();
-            System.out.println(message);
-            if(message.equals("1")){
-                JOptionPane.showMessageDialog(messagePane, "Device Added Succesfully");
-            }else{
-                JOptionPane.showMessageDialog(messagePane, "Device already Exists");
+    }  
+    
+    private void removeDevice() {
+        try {
+            String response = (String) doServerActionToObject("removeDevice", bCodeBox.getText());
+            if (response.equals("1")) {
+                JOptionPane.showMessageDialog(messagePane, "Device removed succesfully");
+            } else {
+                JOptionPane.showMessageDialog(messagePane, "Device does not exist");
             }
-        }catch(Exception e){
+        } catch (Exception e) {
             System.err.println("Error: " + e.getMessage());
-        }
+        }        
     }
     
-    private void removeDevice() { 
-        try{            
-            Socket s = new Socket("localHost", 8765);
-            String message = "removeDevice";
-            OutputStream os = s.getOutputStream();
-            ObjectOutputStream oos = new ObjectOutputStream(os);
-            oos.writeObject(message);
-            
-            InputStream is = s.getInputStream();
-            ObjectInputStream ois = new ObjectInputStream(is);
-            message = (String)ois.readObject();
-            System.out.println(message);
-            if(message.equals("OK")){
-                System.out.println(message);
-                removeDevice(s,bCodeBox.getText());
-            }else{
-                JOptionPane.showMessageDialog(messagePane, "Error");
-            }
-            ois.close();
-            is.close();
-            os.close();
-            s.close();            
-            
-        }catch(Exception e){
-            System.err.println("Error: " + e.getMessage());
-            e.printStackTrace(System.err);
-        }
-    }
-    
-    private void removeDevice(Socket s, String id){
-        try{
-            OutputStream os = s.getOutputStream();
-            ObjectOutputStream oos = new ObjectOutputStream(os);
-            oos.writeObject(id);
-            
-            InputStream is = s.getInputStream();
-            ObjectInputStream ois = new ObjectInputStream(is);
-            String message = (String)ois.readObject();
-            System.out.println(message);
-            if(message.equals("1")){
-                JOptionPane.showMessageDialog(messagePane, "Device Removed Succesfully");
-            }else{
-                JOptionPane.showMessageDialog(messagePane, "Device does not Exists");
-            }
-        }catch(Exception e){
-            System.err.println("Error: " + e.getMessage());
-        }
-    }
-
     private void updateDevice(Device device) {
         try {
-            Socket s = new Socket("localHost", 8765);
-            String message = "updateDevice";
-            OutputStream os = s.getOutputStream();
-            ObjectOutputStream oos = new ObjectOutputStream(os);
-            oos.writeObject(message);
-
-            InputStream is = s.getInputStream();
-            ObjectInputStream ois = new ObjectInputStream(is);
-            message = (String) ois.readObject();
-            System.out.println(message);
-            if (message.equals("OK")) {
-                System.out.println(message);
-                updateDevice(s, device);
+            String response = (String) doServerActionToObject("updateDevice", device);
+            if (response.equals("1")) {
+                JOptionPane.showMessageDialog(messagePane, "Device updated succesfully");
             } else {
-                JOptionPane.showMessageDialog(messagePane, "Error");
+                JOptionPane.showMessageDialog(messagePane, "Device does not exist");
             }
-            ois.close();
-            is.close();
-            os.close();
-            s.close();
-
         } catch (Exception e) {
             System.err.println("Error: " + e.getMessage());
         }
     }
     
-    private void updateDevice(Socket s, Device d){
+    private void getDevice(Socket socket){
         try{
-            OutputStream os = s.getOutputStream();
-            ObjectOutputStream oos = new ObjectOutputStream(os);
-            oos.writeObject(d);
+            ObjectOutputStream output = new ObjectOutputStream(socket.getOutputStream());
+            output.writeObject(searchCode.getText());
             
-            InputStream is = s.getInputStream();
-            ObjectInputStream ois = new ObjectInputStream(is);
-            String message = (String)ois.readObject();
-            System.out.println(message);
-            if(message.equals("1")){
-                JOptionPane.showMessageDialog(messagePane, "Device Updated Succesfully");
-            }else{
-                JOptionPane.showMessageDialog(messagePane, "Device Does Not Exist");
-            }
-        }catch(Exception e){
-            System.err.println("Error: " + e.getMessage());
-        }
-    }
-        
-    private void getDevice(Socket s){
-        try{
-            OutputStream os = s.getOutputStream();
-            ObjectOutputStream oos = new ObjectOutputStream(os);
-            oos.writeObject(searchCode.getText());
-            
-            InputStream is = s.getInputStream();
-            ObjectInputStream ois = new ObjectInputStream(is);
-            String message = (String)ois.readObject();
-            System.out.println(message);
-            if(message.equals("1")){
+            ObjectInputStream input = new ObjectInputStream(socket.getInputStream());
+            String response = (String)input.readObject();
+            System.out.println(response);
+            if(response.equals("1")){
                 JOptionPane.showMessageDialog(messagePane, "Device retrieved Succesfully");
-                is = s.getInputStream();
-                ois = new ObjectInputStream(is);
-                Device d = (Device)ois.readObject();
+                input = new ObjectInputStream(socket.getInputStream());
+                Device d = (Device)input.readObject();
                 updateLabels(d);
                 System.out.println(d.toString());
                 bCodeBox.setEnabled(false);
+                btnSave.setEnabled(true);
             }else{
                 JOptionPane.showMessageDialog(messagePane, "Device does not Exists");
+                //btnSave.setEnabled(false);
             }
         }catch(Exception e){
             System.err.println("Error: " + e.getMessage());
@@ -948,22 +815,32 @@ public class EquipManagementForm extends javax.swing.JFrame {
     }
     
     private void updateLabels(Device d){
-        retrieveBtn.setVisible(false);
-        searchCode.setVisible(false);
-        eBarcodeLabel.setVisible(false);
-        devicePanel.setLocation(0, 50);
-        devicePanel.setVisible(true);
+        clearAllPanels();
+        showDeviceInfoSearchCard("info"); // show the device info panel
+        deviceDetailsPanel.setVisible(false); // hide the device details panel
+        // initialize the device info panel
+        bCodeBox.setEnabled(true);
         deviceGroup.clearSelection();
-        laptopCheck.setEnabled(false);
-        laptopCheck.setSelected(false);
-        computerPanel.setVisible(false);
         
         bCodeBox.setText(d.getId());
         serialBox.setText(d.getSerialNumber());
         deviceBox.setText(d.getDeviceName());
         condBox.setText(d.getCondition());
         
-        if (d instanceof Camera) {
+        if (d instanceof Computer) {
+            Computer computer = (Computer) d;
+            computerBtn.doClick();
+            // Display the computers's information
+            cpuBox.setText(computer.getCPU());
+            ramBox.setText(computer.getRAM());
+            diskBox.setText(computer.getDiskSize());
+            // If the copmuter is a laptop, display additional information
+            if (computer instanceof Laptop) {
+                laptopCheck.doClick();
+                screenBox.setText(((Laptop) computer).getScreenSize());
+                touchCheck.setSelected(((Laptop) computer).isIsTouch());
+            }
+        } else if (d instanceof Camera) {
             Camera c = (Camera) d;
             cameraBtn.doClick();
             // Display the camera's information
@@ -980,21 +857,9 @@ public class EquipManagementForm extends javax.swing.JFrame {
             plugBox.setText(Double.toString(headphones.getPlugDiameter()));
             micCheck.setSelected(headphones.isHasMic());
             volumeCheck.setSelected(headphones.isHasVolumeControl());
-        } else if (d instanceof Computer) { //TO-DO implement for the rest of the devices 
-            Computer computer = (Computer) d;
-            computerBtn.doClick();
-            // Display the computers's information
-            cpuBox.setText(computer.getCPU());
-            ramBox.setText(computer.getRAM());
-            diskBox.setText(computer.getDiskSize());
-            // If the copmuter is a laptop, display additional information
-            if (computer instanceof Laptop) {
-                laptopCheck.doClick();
-                screenBox.setText(((Laptop) computer).getScreenSize());
-                touchCheck.setSelected(((Laptop) computer).isIsTouch());
-            }
         }
     }
+    
     /**
      * @param args the command line arguments
      */
@@ -1030,11 +895,9 @@ public class EquipManagementForm extends javax.swing.JFrame {
         });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton CameraBtn;
-    private javax.swing.JButton addComputerBtn;
     private javax.swing.JRadioButton addERBtn;
-    private javax.swing.JButton addHP;
     private javax.swing.JTextField bCodeBox;
+    private javax.swing.JButton btnSave;
     private javax.swing.JTextField cTypeBox;
     private javax.swing.JRadioButton cameraBtn;
     private javax.swing.JPanel cameraPanel;
@@ -1044,7 +907,9 @@ public class EquipManagementForm extends javax.swing.JFrame {
     private javax.swing.JTextField cordBox;
     private javax.swing.JTextField cpuBox;
     private javax.swing.JTextField deviceBox;
+    private javax.swing.JPanel deviceDetailsPanel;
     private javax.swing.ButtonGroup deviceGroup;
+    private javax.swing.JPanel deviceInfoSearchPanel;
     private javax.swing.JPanel devicePanel;
     private javax.swing.JTextField diskBox;
     private javax.swing.JLabel eBarcodeLabel;
@@ -1057,6 +922,7 @@ public class EquipManagementForm extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
+    private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -1078,6 +944,7 @@ public class EquipManagementForm extends javax.swing.JFrame {
     private javax.swing.JTextField screenBox;
     private javax.swing.JLabel screenLabel;
     private javax.swing.JTextField searchCode;
+    private javax.swing.JPanel searchPanel;
     private javax.swing.JTextField serialBox;
     private javax.swing.JTextField stBox;
     private javax.swing.JCheckBox touchCheck;
