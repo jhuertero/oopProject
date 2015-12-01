@@ -95,7 +95,8 @@ public class ServerThread extends Thread{
             "getDevice", 
             "updateDevice",
             "checkoutDevice",
-            "checkinDevice"
+            "checkinDevice",
+            "forgetPassword"
         };
         boolean isValid = false;
         for (String validAction : validActions) {

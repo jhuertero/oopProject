@@ -30,6 +30,7 @@ public class EquipManagementForm extends javax.swing.JFrame {
      */
     
     AdminForm preForm;
+    private boolean checkedOut;
     private static final String SERVER_NAME = "localhost";
     private static final int PORT_NUMBER = 8765;
     
@@ -764,6 +765,7 @@ public class EquipManagementForm extends javax.swing.JFrame {
     }  
     
     private void removeDevice() {
+       if(checkedOut != true){
         try {
             String response = (String) doServerActionToObject("removeDevice", bCodeBox.getText());
             if (response.equals("1")) {
@@ -773,19 +775,27 @@ public class EquipManagementForm extends javax.swing.JFrame {
             }
         } catch (Exception e) {
             System.err.println("Error: " + e.getMessage());
-        }        
+        }   
+       }else{
+          JOptionPane.showMessageDialog(messagePane, "Cannot Delete CheckedOut Item");
+      }
+       
     }
     
     private void updateDevice(Device device) {
-        try {
-            String response = (String) doServerActionToObject("updateDevice", device);
-            if (response.equals("1")) {
-                JOptionPane.showMessageDialog(messagePane, "Device updated succesfully");
-            } else {
-                JOptionPane.showMessageDialog(messagePane, "Device does not exist");
+        if(checkedOut != true){
+            try {
+                String response = (String) doServerActionToObject("updateDevice", device);
+                if (response.equals("1")) {
+                    JOptionPane.showMessageDialog(messagePane, "Device updated succesfully");
+                } else {
+                    JOptionPane.showMessageDialog(messagePane, "Device does not exist");
+                }
+            } catch (Exception e) {
+                System.err.println("Error: " + e.getMessage());
             }
-        } catch (Exception e) {
-            System.err.println("Error: " + e.getMessage());
+        }else{
+            JOptionPane.showMessageDialog(messagePane, "Cannont Update a device that is checked out");
         }
     }
     
@@ -858,6 +868,11 @@ public class EquipManagementForm extends javax.swing.JFrame {
             micCheck.setSelected(headphones.isHasMic());
             volumeCheck.setSelected(headphones.isHasVolumeControl());
         }
+        String s = d.getCheckedOutTo();
+        if(s == null)
+            checkedOut = false;
+        else
+            checkedOut = true;
     }
     
     /**
